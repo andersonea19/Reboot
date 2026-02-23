@@ -27,7 +27,7 @@ header {
 }
 
 .superior {
-    height: 40%;
+    height: 35%;
 }
 
 h1 {
@@ -61,22 +61,45 @@ h1 {
 }
 
 .inferior {
-    width: 60%;
-    height: 60%;
+    width: 90%;
+    height: 65%;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: var(--fuenteTexto);
-    gap: 15%;
+    justify-content: space-around;
+    gap: 10%;
 }
 
-.inferior__parrafo {
-    font-size: 1.5rem;
+.inferior__top {
+    display: flex;
+    flex-direction: column;
     text-align: center;
+    letter-spacing: 25%;
+    font-size: 3rem;
+    height: 40%;
+}
+
+.inferior__bottom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bienvenido {
+    font-size: 1.8rem;
+    letter-spacing: 0;
+    float: bottom;
+}
+
+.mensajito {
+    font-size: 1rem;
+    gap: 0;
+    letter-spacing: 40%;
 }
 
 .botones {
-    width: 50%;
+    width: 40%;
     height: auto;
     display: flex;
     flex-wrap: wrap;
@@ -108,6 +131,12 @@ h1 {
 .boton--registro a {
     text-decoration: none;
     color: var(--colorPrincipal);
+}
+
+main{
+    width: 100%;
+    height: auto;
+
 }
 
 @media (max-width: 768px) {
