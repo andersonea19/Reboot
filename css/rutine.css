@@ -10,7 +10,6 @@ body {
     background-image: url(../imglanding/images.png);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: top;
     background-attachment: fixed;
     background-color: rgba(0, 0, 0, 0.901);
     background-blend-mode: darken;
@@ -18,7 +17,6 @@ body {
 }
 
 header {
-    padding: 5% 0;
     height: 100vh;
     width: 100%;
     display: grid;
@@ -31,7 +29,6 @@ h1 {
     font-size: 3rem;
     color:var(--colorPrincipal);
     letter-spacing: 3px;
-    
 }
 
 .header__barranav {
@@ -58,31 +55,38 @@ h1 {
 
 .inferior {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: var(--fuenteTexto);
-    justify-content: space-evenly;
-    gap: 10%;
+    height: 100%;
+    display: grid;
 }
 
 .inferior__top {
     display: flex;
     flex-direction: column;
     text-align: center;
+    justify-content: center;
     letter-spacing: 25%;
     font-size: 3rem;
     background: linear-gradient(
         to right,
-        #F5F5F5 10%,
-        #8d8b8b 40%,
-        #605e5e 60%,
+        #F5F5F5 20%,
+        #6c6b6b 35%,
+        #605e5e 55%,
         #868585 80%
     );
-    background-size: 200%;
+    background-size: 300%;
     color: transparent;
     background-clip: text;
-    animation: shine 6s linear infinite;
+    animation: shine 2s linear infinite;
+}
+
+.inferior__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+    width: auto;
+    gap: 15%;
+    padding-bottom: 3%;
 }
 
 .bienvenido {
@@ -131,7 +135,17 @@ main{
 
 .contenedor {
     width: 100%;
-    
+    height: auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.tarjeta {
+    width: 150px;
+    height: 300px;
+    background-color: white;
+    border: 1px solid black;
 }
 
 @media (max-width: 768px) {
