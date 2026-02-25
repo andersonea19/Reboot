@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/register.css">
+    <title>Registro</title>
+</head>
+<body>
+    <div class="contenedorDerecha">
+        <h1>Registro</h1>
+        <form class="containerForm">
+            <div class="datosRegistro">
+                <label for="" id="nombre">Nombre: </label>
+                <input type="text" id="nombre" placeholder="Ingrese su nombre completo">
+                <label for="" id="nacimiento">Nacimiento: </label>
+                <input type="date" id="nacimiento">
+                <label for="" id="sexo">Genero: </label>
+                <select name="" id="sexo">
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+                <label for="" id="email">Email: </label>
+                <input type="email" id="email" placeholder="Correo electronico">
+                <label for="" id="contraseña">Contraseña: </label>
+                <input type="password" id="contraseña" placeholder="Ingrese su contraseña">
+            </div>
+            <button type="submit" class="registrarse">Registrarse</button>
+        </form>
+        <div class="otrasOpciones">
+            <p>¿ya tiene una cuenta? <a href="/index/login.html">Inicie sesión</a></p>
+        </div>
+    </div>
+    <div class="contenedorIzquierda"></div>
+</body>
+</html>

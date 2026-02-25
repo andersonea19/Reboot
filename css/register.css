@@ -1,0 +1,92 @@
+@import "/css/basic.css";
+
+body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    height: 100vh;
+    background-image: url(../imglanding/images.png);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+.contenedorDerecha {
+    height: auto;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-rows: 0.2fr 0.7fr 0.1fr;
+    background-color: white;
+    place-items: center;
+    gap: 20px;
+}
+
+.contenedorIzquierda {
+    order: -1;
+}
+
+.containerForm {
+    width: 80%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 0.8fr 0.2fr;
+    place-items: center;
+    gap: 5%;
+}
+
+.datosRegistro {
+    height: auto;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.datosRegistro select {
+    border: none;
+    border-bottom: 1px solid var(--colorSecundario);
+    padding: 8px;
+    font-size: 0.7rem;
+}
+
+.datosRegistro select:focus {
+    border: none;
+    outline: none;
+    border-bottom: 2px solid var(--colorSecundario);
+}
+
+.registrarse {
+    width: 30%;
+    padding: 10px 0;
+    border-radius: 25px;
+    background-color: transparent;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.otrasOpciones a {
+    color: var(--enlaces);
+}
+
+label {
+    font-size: 1.3rem;
+}
+
+input {
+    padding: 8px;
+    margin-bottom: 1%;
+    border: none;
+    border-bottom: 1px solid var(--colorSecundario);
+    font-size: 0.7rem;
+    width: 100%;
+}
+
+input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--colorSecundario);
+    font-size: 0.75rem;
+}
