@@ -19,7 +19,7 @@ h1 {
     display: grid;
     grid-template-rows: 0.3fr 0.7fr;
     width: 100%;
-    height: auto;
+    height: 100vh;
     padding: 20px;
     place-items: center;
     background-color: white;

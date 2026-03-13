@@ -76,7 +76,7 @@ h1 {
     background-size: 300%;
     color: transparent;
     background-clip: text;
-    animation: shine 2s linear infinite;
+    animation: shine 3s linear infinite;
 }
 
 .inferior__bottom {
@@ -84,7 +84,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    width: auto;
+    width: 100%;
     gap: 15%;
     padding-bottom: 3%;
 }
