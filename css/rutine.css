@@ -13,7 +13,7 @@ body {
     background-attachment: fixed;
     background-color: rgba(0, 0, 0, 0.901);
     background-blend-mode: darken;
-    color: var(--colorPrincipal);
+    color: var(--colorTerciario);
 }
 
 .superior {
@@ -75,14 +75,14 @@ h1 {
     background: linear-gradient(
         to right,
         #F5F5F5 20%,
-        #6c6b6b 35%,
-        #605e5e 55%,
-        #868585 80%
+        #b3aeae 35%,
+        #848282 55%,
+        #acabab 75%
     );
     background-size: 300%;
     color: transparent;
     background-clip: text;
-    animation: shine 3s linear infinite;
+    animation: shine 6s linear infinite;
 }
 
 .inferior__bottom {
