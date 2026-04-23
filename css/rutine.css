@@ -6,16 +6,6 @@
     }
 }
 
-body {
-    background-image: url(../imglanding/images.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    background-color: rgba(0, 0, 0, 0.901);
-    background-blend-mode: darken;
-    color: var(--colorTerciario);
-}
-
 .superior {
     display: flex;
     flex-direction: column;
@@ -23,6 +13,12 @@ body {
 }
 
 header {
+    background-image: url(../imglanding/images.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(0, 0, 0, 0.82);
+    background-blend-mode: darken;
     height: 100vh;
     width: 100%;
     display: grid;
@@ -33,7 +29,7 @@ h1 {
     text-align: center;
     font-family: var(--fuenteTitulos);
     font-size: 3rem;
-    color:var(--colorPrincipal);
+    color:var(--colorTerciario);
     letter-spacing: 3px;
 }
 
@@ -47,7 +43,7 @@ h1 {
 
 .header__barranav a {
     font-family: var(--fuenteSubtitulo);
-    color: var(--colorPrincipal);
+    color: var(--colorTerciario);
     text-decoration: none;
     border-radius: 15px;
     font-weight: 400;
@@ -74,15 +70,15 @@ h1 {
     font-size: 3rem;
     background: linear-gradient(
         to right,
-        #F5F5F5 20%,
+        #ffffff 20%,
         #b3aeae 35%,
-        #848282 55%,
-        #acabab 75%
+        #aca1a1 55%,
+        #ffffff 75%
     );
     background-size: 300%;
     color: transparent;
     background-clip: text;
-    animation: shine 6s linear infinite;
+    animation: shine 3s linear infinite;
 }
 
 .inferior__bottom {
@@ -104,53 +100,107 @@ h1 {
     letter-spacing: 40%;
 }
 
-.botones {
+.contenedor__botones {
     width: 40%;
-    height: auto;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-around;
+    flex-flow: row wrap;
 }
 
-.botones__login {
+.botones--login {
     width: 40%;
-    background-color: var(--colorPrincipal);
+    background-color: var(--colorTerciario);
     padding: 10px 0;
+    border: 2px solid var(--colorSecundario);
     border-radius: 35px;
-    border: solid;
-    font-size: 1rem;
-    font-weight: bold;
-    font-family: var(--fuenteBotones);
-    cursor: pointer;
-    text-align: center;
+    place-items: center;
     text-decoration: none;
+    text-align: center;
     color: var(--colorSecundario);
 }
 
 .botones--register {
     background-color: transparent;
-    border: solid var(--colorPrincipal);
-    color: var(--colorPrincipal);
+    border: 2px solid var(--colorTerciario);
+    color: var(--colorTerciario);
 }
 
-main{
+main {
     width: 100%;
     height: auto;
 }
 
-.contenedor {
+#ACDN {
     width: 100%;
     height: auto;
+    background-color: var(--colorPrincipal);
+}
+
+.ACDN__contenido {
+    padding: 10px;
+    margin: 0 auto;
+    width: 90%;
+    height: auto;
+    display: grid;
+    grid-template-rows: 0.2fr repeat(2, 0.4fr);
+}
+
+.contenedor__titulo {
+    width: 60%;
+    margin: 1% auto 3% auto;
+}
+
+.ACDN__titulo {
+    color: var(--colorSecundario);
+    font-size: 3rem;
+    line-height: 0.6;
+    letter-spacing: 15px;
+    margin: 5% 0; 
+    text-align: center;
+}
+
+.contenido__texto {
+    margin: 0 auto;
+    text-align: center;
+    display: grid;
+    grid-template-rows: repeat(2, 0.5fr);
+    justify-self: space-evenly;
+    width: 65%;
+    margin-bottom: 5%;
+}
+
+.ACDN__contenido p + p {
+    margin-top: 20px;
+}
+
+.ACDN__parrafos {
+    font-size: 0.8rem;
+    line-height: 0.9;
+}
+
+.pasos__titulo {
+    font-size: 1.7rem;
+}
+
+.contenedor__tarjetas {
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--colorSecundario);
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
-.tarjeta {
-    width: 150px;
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
+.tarjeta__pasos {
+    width: 400px;
+    height: 450px;
+    border-radius: 20px;
+    padding: 1%;
+}
+
+.tarjeta__pasos {
+    background-color: var(--colorPrincipal);
+    border: 2px solid var(--colorSecundario);
 }
 
 @media (max-width: 768px) {
