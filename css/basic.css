@@ -15,7 +15,19 @@ html {
     --fuenteSubtitulo: 'Oswald', sans-serif;
     --fuenteBotones: 'Oswald', sans-serif;
     --fuenteTexto: 'Montserrat', sans-serif;
-    --colorPrincipal: #FFFF;
-    --colorSecundario: #000;
+    --colorPrincipal: #868484;
+    --colorSecundario: #000000;
+    --colorTerciario: #ffffff;
     --enlaces: #0000FF;
+}
+
+.botones {
+    height: auto;
+    border: 1px solid transparent;
+    font-family: var(--fuenteBotones);
+    text-align: center; 
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bolder;
+    font-size: 1rem;
 }
