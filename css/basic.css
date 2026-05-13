@@ -18,7 +18,8 @@ html {
     --colorPrincipal: #868484;
     --colorSecundario: #000000;
     --colorTerciario: #ffffff;
-    --enlaces: #0000FF;
+    --cuartoColor: #d9d1d1e9;
+    --enlaces_efectos_bordes: #0000FF;
 }
 
 .botones {
