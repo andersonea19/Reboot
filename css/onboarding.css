@@ -179,6 +179,10 @@ h2 {
     transition: 0.3s;
 }
 
+.btn-guardar:hover {
+    transform: scale(1.05);
+}
+
 @media(max-width: 950px){
     main{
         grid-template-columns: 1fr;
