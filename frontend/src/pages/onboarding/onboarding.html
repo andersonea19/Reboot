@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Onboarding</title>
+    <link rel="stylesheet" href="../css/onboarding.css">
+</head>
+
+<body>
+    <main>
+        <section class="info-panel">
+            <div class="contenedor-informacion">
+                <h1>Configura tu perfil físico</h1>
+                <p>Estos datos ayudarán al sistema a generar rutinas más coherentes contigo.</p>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <form class="formulario">
+            <div class="bloque">
+                <h2 class="fomulario__tituloPrincipal">Datos físicos</h2>
+                <div class="grid-inputs">
+                    <div class="campo">
+                        <label for="peso">Peso</label>
+                        <div class="input-box">
+                            <input type="number" id="peso" placeholder="70"><span>kg</span>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="estatura">Estatura</label>
+                        <div class="input-box">
+                            <input type="number" id="estatura" placeholder="175"><span>cm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <div class="bloque">
+                    <h2>Objetivo</h2>
+                    <div class="grid-cards">
+                        <button type="button" class="botones">
+                            <h3>Fuerza</h3>
+                        </button>
+
+                        <button type="button" class="botones">
+                            <h3>Hipertrofia</h3>
+                        </button>
+
+                        <button type="button" class="botones">
+                            <h3>Resistencia</h3>
+                        </button>
+
+                        <button type="button" class="botones">
+                            <h3>Movildidad</h3>
+                        </button>
+                    </div>
+                </div>
+
+            <div class="bloque">
+                <h2>Nivel físico</h2>
+                <div class="niveles">
+                    <button type="button" class="botones botones--nivel">Principiante</button>
+                    <button type="button" class="botones botones--nivel">Intermedio</button>
+                    <button type="button" class="botones botones--nivel">Avanzado</button>
+                </div>
+            </div>
+
+            <div class="bloque">
+                <h2>Limitaciones físicas</h2>
+                    <div class="checkbox-grid">
+
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Lesión de rodilla
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Lesión de hombro
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Lesión de muñeca
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Lesión de espalda baja
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Lesión de codo
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        Hipertensión
+                    </label>
+                    </div>
+            </div>
+
+            <button class="btn-guardar">Guardar perfil</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
