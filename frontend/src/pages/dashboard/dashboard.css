@@ -1,0 +1,127 @@
+@import '../css/basic.css';
+
+/* Layout Bloque Dashboard */
+.dashboard {
+    width: 100%;
+    height: 100vh;
+}
+
+.dashboard__contenedor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px; /* Deja espacio para el sidebar */
+}
+
+/* Sidebar */
+.sidebar {
+    background-image: url(../img/sidebar.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 250px;
+    color: var(--colorTerciario);
+    position: fixed;
+    height: 100vh;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar__titulo {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.sidebar__lista {
+    list-style: none;
+}
+
+.sidebar__item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar__link {
+    font-size: 0.8rem;
+    border: 1px solid transparent;
+    color: var(--colorTerciario);
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.sidebar__link:hover, .sidebar__link--active {
+    background-color: var(--colorPrincipal);
+}
+
+.sidebar__divider {
+    border: 0;
+    border-top: 1px solid var(--colorTerciario);
+    margin: 1.5rem 0;
+}
+
+/* Navbar */
+.navbar {
+    height: 65px;
+    background-color: var(--colorPrincipal);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.navbar__info {
+    margin-right: 1.5rem;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--colorTerciario);
+}
+
+.navbar__rol {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--enlaces_efectos_bordes);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.navbar__btn {
+    border: 2px solid transparent;
+    background-color: var(--enlaces_efectos_bordes);
+    font-size: 0.6rem;
+    color: var(--colorTerciario);
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.1s, border 0.3s;
+}
+
+.navbar__btn:hover {
+    background-color: var(--colorTerciario);
+    color: var(--enlaces_efectos_bordes);
+    border: 2px solid var(--enlaces_efectos_bordes);
+    outline: none;
+    transform: none;
+}
+
+/* Contenedor de Vistas (SPA) */
+.vista-contenedor {
+    padding: 2rem;
+    background-image: url(../img/black-and-white-graffiti-background-vector.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.vista-placeholder {
+    background-color: var(--colorTerciario);
+    padding: 3rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px solid var(--colorSecundario);
+}

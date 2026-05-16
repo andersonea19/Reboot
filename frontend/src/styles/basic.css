@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 25px;
+    scroll-behavior: smooth;
+}
+
+:root { 
+    --fuenteTitulos: 'Bebas Neue', sans-serif;
+    --fuenteSubtitulo: 'Oswald', sans-serif;
+    --fuenteBotones: 'Oswald', sans-serif;
+    --fuenteTexto: 'Montserrat', sans-serif;
+    --gris-oscuro: #868484;
+    --negro: #000000;
+    --blanco: #ffffff;
+    --gris-claro: #d9d1d1e9;
+    --azul: #0000FF;
+}
+
+.botones {
+    height: auto;
+    border: 2px solid transparent;
+    font-family: var(--fuenteBotones);
+    text-align: center; 
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bolder;
+    font-size: 1rem;
+}
+
+
