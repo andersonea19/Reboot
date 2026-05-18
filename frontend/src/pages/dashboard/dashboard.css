@@ -1,41 +1,40 @@
-@import '../css/basic.css';
+@import "/frontend/src/styles/basic.css";
 
-/* Layout Bloque Dashboard */
 .dashboard {
+    display: flex;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
 }
 
 .dashboard__contenedor {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-left: 250px; /* Deja espacio para el sidebar */
+    margin-left: 250px;
+    height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
-    background-image: url(../img/sidebar.jpg);
+    background-image: url(/frontend/public/assets/images/sidebar.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     width: 250px;
-    color: var(--colorTerciario);
-    position: fixed;
     height: 100vh;
-    padding: 2rem 1rem;
+    position: fixed;
     display: flex;
     flex-direction: column;
+    padding: 2rem 1rem;
+    color: var(--blanco);
+    z-index: 100;
 }
 
 .sidebar__titulo {
+    font-family: var(--fuenteTitulos);
     font-size: 1.5rem;
     letter-spacing: 2px;
     text-align: center;
     margin-bottom: 2rem;
-}
-
-.sidebar__lista {
-    list-style: none;
 }
 
 .sidebar__item {
@@ -45,32 +44,36 @@
 .sidebar__link {
     font-size: 0.8rem;
     border: 1px solid transparent;
-    color: var(--colorTerciario);
-    text-decoration: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--blanco);
     padding: 10px 15px;
     display: block;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
-.sidebar__link:hover, .sidebar__link--active {
-    background-color: var(--colorPrincipal);
+
+.sidebar__link:hover,
+.sidebar__link--active {
+    background-color: var(--gris-oscuro);
 }
 
 .sidebar__divider {
     border: 0;
-    border-top: 1px solid var(--colorTerciario);
+    border-top: 1px solid var(--blanco);
     margin: 1.5rem 0;
 }
 
-/* Navbar */
 .navbar {
     height: 65px;
-    background-color: var(--colorPrincipal);
+    background-color: var(--gris-oscuro);
     display: flex;
-    gap: 10px;
     justify-content: flex-end;
     align-items: center;
+    gap: 10px;
     padding: 0 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
@@ -79,49 +82,72 @@
     margin-right: 1.5rem;
     text-align: right;
     font-size: 0.75rem;
-    color: var(--colorTerciario);
+    color: var(--blanco);
 }
 
 .navbar__rol {
     display: block;
     font-size: 0.75rem;
-    color: var(--enlaces_efectos_bordes);
     font-weight: bold;
     text-transform: uppercase;
+    color: var(--azul);
 }
 
-.navbar__btn {
-    border: 2px solid transparent;
-    background-color: var(--enlaces_efectos_bordes);
+.navbar__usuario {
+    display: block;
+}
+
+.boton--logout-dashboard { 
+    border-radius: 15px;
+    background-color: var(--azul);
     font-size: 0.6rem;
-    color: var(--colorTerciario);
+    color: var(--blanco);
     padding: 10px 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s, color 0.1s, border 0.3s;
+    transition:
+        background-color 0.3s ease,
+        color 0.1s ease,
+        border 0.3s ease;
 }
 
-.navbar__btn:hover {
-    background-color: var(--colorTerciario);
-    color: var(--enlaces_efectos_bordes);
-    border: 2px solid var(--enlaces_efectos_bordes);
-    outline: none;
-    transform: none;
+.boton--logout-dashboard:hover {
+    background-color: var(--blanco);
+    color: var(--azul);
+    border: 2px solid var(--azul);
 }
 
-/* Contenedor de Vistas (SPA) */
 .vista-contenedor {
-    padding: 2rem;
-    background-image: url(../img/black-and-white-graffiti-background-vector.jpg);
+    flex: 1;
+    padding: 1rem;
+    background-image: url(/frontend/public/assets/images/black-and-white-graffiti-background-vector.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    overflow-y: auto;
 }
 
 .vista-placeholder {
-    background-color: var(--colorTerciario);
-    padding: 3rem;
+    background-color: var(--blanco);
+    border: 2px solid var(--negro);
     border-radius: 8px;
+    padding: 3rem;
     text-align: center;
-    border: 2px solid var(--colorSecundario);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay--hidden {
+    display: none;
+    pointer-events: none;
 }

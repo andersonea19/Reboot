@@ -13,7 +13,7 @@
 }
 
 header {
-    background-image: url(/frontend/public/assets/img/images.png);
+    background-image: url(/frontend/public/assets/images/images.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
