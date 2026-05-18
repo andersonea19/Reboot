@@ -4,58 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
-<body class="dashboard">
 
+<body class="dashboard">
     <aside class="sidebar">
         <div class="sidebar__logo">
             <h1 class="sidebar__titulo">REBOOT</h1>
         </div>
-        <nav class="sidebar__navegacion">
-            <ul class="sidebar__lista" id="nav-usuario">
-                <li class="sidebar__item">
-                    <a href="#" class="sidebar__link sidebar__link--active" data-view="routine">Mi Rutina</a>
-                </li>
-                <li class="sidebar__item">
-                    <a href="#" class="sidebar__link" data-view="generator">Generar Rutina</a>
-                </li>
-                <li class="sidebar__item">
-                    <a href="#" class="sidebar__link" data-view="history">Historial</a>
-                </li>
-            </ul>
-            
-            <hr class="sidebar__divider">
-
-            <ul class="sidebar__lista" id="nav-admin">
-                <li class="sidebar__item">
-                    <a href="#" class="sidebar__link" data-view="admin-ejericicios">Ejercicios (CRUD)</a>
-                </li>
-                <li class="sidebar__item">
-                    <a href="#" class="sidebar__link" data-view="admin-usuarios">Usuarios</a>
-                </li>
-            </ul>
-        </nav>
+        <nav class="sidebar__navegacion" id="sidebar-nav"></nav>
     </aside>
-
     <div class="dashboard__contenedor">
-        
         <header class="navbar">
             <div class="navbar__info">
-                <span class="navbar__rol">Usuario</span>
-                <span class="navbar__usuario">un usuario</span>
+                <span class="navbar__rol" id="user-role"></span>
+                <span class="navbar__usuario" id="user-name"></span>
             </div>
-            <button class="navbar__btn" id="logout-btn">Cerrar Sesión</button>
+            <button class="botones boton--logout-dashboard" id="logout-btn" type="button">Cerrar Sesión</button>
         </header>
-
-        <main class="vista-contenedor" id="main-vista">
+        <main class="vista-contenedor" id="dashboard-view">
             <section class="vista-placeholder">
                 <h2>Bienvenido a Reboot</h2>
                 <p>Selecciona una opción del menú para comenzar.</p>
             </section>
         </main>
-
     </div>
-
+    <div id="modal-container" class="modal-overlay modal-overlay--hidden" role="dialog" area-hidden="true"></div>
 </body>
 </html>

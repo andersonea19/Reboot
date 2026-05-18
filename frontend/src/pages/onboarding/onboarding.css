@@ -1,8 +1,8 @@
-@import '../css/basic.css';
+@import '/frontend/src/styles/basic.css';
 
 body {
     width: 100%;
-    background-image: url(../imglanding/fondo-onboarding.png);
+    background-image: url(/frontend/public/assets/images/fondo-onboarding.png);
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -26,12 +26,12 @@ h1, h2 {
 
 h1 {
     font-size: 3rem;
-    color: var(--colorTerciario);
+    color: var(--blanco);
 }
 
 .fomulario__tituloPrincipal {
     font-size: 2rem;
-    color: var(--enlaces_efectos_bordes);
+    color: var(--azul);
 }
 
 
@@ -41,7 +41,7 @@ label {
 
 .contenedor-informacion p {
     font-family: var(--fuenteTexto);
-    color: var(--colorTerciario);
+    color: var(--blanco);
 }
 
 
@@ -49,12 +49,12 @@ label {
     min-height: 90vh; 
     padding: 40px;   
     border-radius: 40px;
-    background-color: var(--colorTerciario);
+    background-color: var(--blanco);
     opacity: 90%;
 }
 
 .info-panel {
-    background-color: var(--enlaces_efectos_bordes);
+    background-color: var(--azul);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -69,7 +69,7 @@ label {
     justify-content: center;
     overflow-y: auto;
     padding: 0px 25px;
-    box-shadow: 0px 0px 8px 3px var(--enlaces_efectos_bordes);
+    box-shadow: 0px 0px 8px 3px var(--azul);
 }
 
 .contenedor-informacion {
@@ -108,7 +108,7 @@ label {
 }
 
 #estatura:focus, #peso:focus {
-    border-bottom: 3px solid var(--enlaces_efectos_bordes);
+    border-bottom: 3px solid var(--azul);
 }
 
 .formulario{
@@ -137,16 +137,16 @@ label {
     text-align: center;
     cursor: pointer;
     transition: 0.3s;
-    background-color: var(--cuartoColor);
+    background-color: var(--gris-claro);
 }
 
 .botones:hover {
-    border-color: var(--enlaces_efectos_bordes);
+    border-color: var(--azul);
     transform: translateY(-3px);
 }
 
 .botones p {
-    color: var(--colorSecundario);
+    color: var(--negro);
     line-height: 1.5;
 }
 
@@ -172,15 +172,13 @@ label {
     padding: 10px 30px;
     border: none;
     border-radius: 15px;
-    background: var(--cuartoColor);
-    color: var(--colorSecundario);
     cursor: pointer;
     transition: 0.3s;
 }
 
 .nivel:hover {
     color: var(--colorTerciario);
-    background: var(--enlaces_efectos_bordes);
+    background: var(--azul);
 }
 
 .checkbox-grid {
@@ -190,7 +188,7 @@ label {
 }
 
 .checkbox-item {
-    background: var(--cuartoColor);
+    background: var(--gris-claro);
     padding: 10px;
     border-radius: 15px;
     display: flex;
@@ -205,8 +203,8 @@ label {
     padding: 10px 30px;
     border: none;
     border-radius: 25px;
-    background: var(--enlaces_efectos_bordes);
-    color: var(--colorTerciario);
+    background: var(--azul);
+    color: var(--blanco);
     font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
