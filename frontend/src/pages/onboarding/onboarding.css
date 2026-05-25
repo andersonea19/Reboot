@@ -14,7 +14,7 @@ main {
     width: 100%;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 0.3fr 1fr;
+    grid-template-columns: 0.5fr 1fr;
     gap: 30px;
     align-items: center;
 }
@@ -22,6 +22,10 @@ main {
 h1, h2 {
     font-family: var(--fuenteTitulos);
     font-weight: bolder;
+    color: var(--azul);
+    font-size: 3rem;
+    margin-bottom: 10%;
+    text-align: center;
 }
 
 h1 {
@@ -29,14 +33,10 @@ h1 {
     color: var(--blanco);
 }
 
-.fomulario__tituloPrincipal {
-    font-size: 2rem;
-    color: var(--azul);
-}
-
 
 label {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+    font-family: var(--fuenteSubtitulo);
 }
 
 .contenedor-informacion p {
@@ -50,7 +50,6 @@ label {
     padding: 40px;   
     border-radius: 40px;
     background-color: var(--blanco);
-    opacity: 90%;
 }
 
 .info-panel {
@@ -58,10 +57,6 @@ label {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-label {
-    font-family: var(--fuenteSubtitulo);
 }
 
 .form-panel{
@@ -84,18 +79,12 @@ label {
     font-size: 1rem;
 }
 
-.grid-inputs{
-    display: grid;
-    grid-template-columns: repeat(2, 0.4fr);
-    width: 100%;
-    justify-content: space-between;
-}
-
 .input-box{
     display: flex;
     align-items: center;
     gap: 10px;
     width: 100%;
+    margin-bottom: 3%;
 }
 
 #peso, #estatura {
@@ -112,13 +101,13 @@ label {
 }
 
 .formulario{
-    width: 100%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
 }
 
-.campo {
+div .campo {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -208,6 +197,29 @@ label {
     font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
+}
+
+#btn-siguiente.botones {
+    padding: 10px 15px;
+    display: block;
+    margin: auto;
+    color: var(--azul);
+}
+
+/* Feedback visual para selecciones estáticas */
+.boton-seleccion.seleccionado {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+.boton-seleccion.seleccionado h3 {
+    color: #fff;
+}
+.error-msg {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 5px;
 }
 
 .btn-guardar:hover {

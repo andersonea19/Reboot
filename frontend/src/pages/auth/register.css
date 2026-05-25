@@ -5,7 +5,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
     height: 100vh;
-    background-image: url(/frontend/public/assets/img/images.png);
+    background-image: url(/frontend/public/assets/images/images.png);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -21,8 +21,7 @@ h1 {
     height: 100vh;
     width: 100%;
     padding: 20px;
-    display: grid;
-    grid-template-rows: 0.2fr 0.7fr 0.1fr;
+    display: grid; 
     background-color:var(--blanco);
     place-items: center;
     gap: 20px;
@@ -84,4 +83,10 @@ input:focus {
     outline: none;
     border-bottom: 2px solid;
     font-size: 0.75rem;
+}
+
+#error-registro{
+    color: red; 
+    display: block; 
+    margin-top: 10px
 }
