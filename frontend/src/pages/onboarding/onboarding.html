@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Onboarding</title>
     <link rel="stylesheet" href="onboarding.css">
 </head>
-
 <body>
     <main>
         <section class="info-panel">
@@ -19,90 +16,70 @@
         </section>
 
         <section class="form-panel">
-            <form class="formulario">
-            <div class="bloque">
-                <h2 class="fomulario__tituloPrincipal">Datos físicos</h2>
-                <div class="grid-inputs">
-                    <div class="campo">
-                        <label for="peso">Peso</label>
-                        <div class="input-box">
-                            <input type="number" id="peso" placeholder="70"><span>kg</span>
+            <form class="formulario" id="form-onboarding">
+                
+                <div class="bloque paso-onboarding" id="paso-1">
+                    <h2 class="fomulario__tituloPrincipal">Datos físicos</h2>
+                    <div class="grid-inputs">
+                        <div class="campo">
+                            <label for="peso">Peso</label>
+                            <div class="input-box">
+                                <input type="number" id="peso" placeholder="70" step="0.1"><span>kg</span>
+                            </div>
+                            <small class="error-msg" id="error-peso"></small>
                         </div>
-                    </div>
-
-                    <div class="campo">
-                        <label for="estatura">Estatura</label>
-                        <div class="input-box">
-                            <input type="number" id="estatura" placeholder="175"><span>cm</span>
+                        <div class="campo">
+                            <label for="estatura">Estatura</label>
+                            <div class="input-box">
+                                <input type="number" id="estatura" placeholder="175" step="1"><span>cm</span>
+                            </div>
+                            <small class="error-msg" id="error-estatura"></small>
                         </div>
                     </div>
                 </div>
-            </div>
 
-                <div class="bloque">
+                <div class="bloque paso-onboarding" id="paso-2" style="display: none;">
                     <h2>Objetivo</h2>
-                    <div class="grid-cards">
-                        <button type="button" class="botones">
-                            <h3>Fuerza</h3>
-                        </button>
+                    <div class="grid-cards" id="contenedor-objetivos">
+                        <button type="button" class="botones boton-seleccion" data-id="1"><h3>Fuerza</h3></button>
+                        <button type="button" class="botones boton-seleccion" data-id="2"><h3>Hipertrofia</h3></button>
+                        <button type="button" class="botones boton-seleccion" data-id="3"><h3>Resistencia</h3></button>
+                        <button type="button" class="botones boton-seleccion" data-id="4"><h3>Movilidad</h3></button>
+                    </div>
+                    <small class="error-msg" id="error-objetivo"></small>
+                </div>
 
-                        <button type="button" class="botones">
-                            <h3>Hipertrofia</h3>
-                        </button>
+                <div class="bloque paso-onboarding" id="paso-3" style="display: none;">
+                    <h2>Nivel físico</h2>
+                    <div class="niveles" id="contenedor-niveles">
+                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="1">Principiante</button>
+                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="2">Intermedio</button>
+                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="3">Avanzado</button>
+                    </div>
+                    <small class="error-msg" id="error-nivel"></small>
+                </div>
 
-                        <button type="button" class="botones">
-                            <h3>Resistencia</h3>
-                        </button>
-
-                        <button type="button" class="botones">
-                            <h3>Movildidad</h3>
-                        </button>
+                <div class="bloque paso-onboarding" id="paso-4" style="display: none;">
+                    <h2>Limitaciones físicas</h2>
+                    <div class="checkbox-grid" id="contenedor-limitaciones">
+                        <label class="checkbox-item"><input type="checkbox" value="1"> Lesión de rodilla</label>
+                        <label class="checkbox-item"><input type="checkbox" value="2"> Lesión de hombro</label>
+                        <label class="checkbox-item"><input type="checkbox" value="3"> Lesión de muñeca</label>
+                        <label class="checkbox-item"><input type="checkbox" value="4"> Lesión de espalda baja</label>
+                        <label class="checkbox-item"><input type="checkbox" value="5"> Lesión de codo</label>
+                        <label class="checkbox-item"><input type="checkbox" value="6"> Hipertensión</label>
                     </div>
                 </div>
 
-            <div class="bloque">
-                <h2>Nivel físico</h2>
-                <div class="niveles">
-                    <button type="button" class="botones botones--nivel">Principiante</button>
-                    <button type="button" class="botones botones--nivel">Intermedio</button>
-                    <button type="button" class="botones botones--nivel">Avanzado</button>
+                <div class="controles-formulario" style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" class="botones" id="btn-atras" style="display: none;">Atrás</button>
+                    <button type="button" class="botones" id="btn-siguiente">Siguiente</button>
+                    <button type="submit" class="btn-guardar" id="btn-guardar" style="display: none;">Guardar perfil</button>
                 </div>
-            </div>
-
-            <div class="bloque">
-                <h2>Limitaciones físicas</h2>
-                    <div class="checkbox-grid">
-
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Lesión de rodilla
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Lesión de hombro
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Lesión de muñeca
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Lesión de espalda baja
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Lesión de codo
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox">
-                        Hipertensión
-                    </label>
-                    </div>
-            </div>
-
-            <button class="btn-guardar">Guardar perfil</button>
             </form>
         </section>
     </main>
+    <script src="onboardingValidaciones.js"></script>
+    <script src="onboarding.js"></script>
 </body>
 </html>

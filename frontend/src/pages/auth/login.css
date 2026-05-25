@@ -5,7 +5,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
     height: 100vh;
-    background-image: url(../../../public/assets/img/images.png);
+    background-image: url(/frontend/public/assets/images/images.png);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -86,4 +86,10 @@ input:focus {
 
 .olvidoContraseña, p, .registrese{
     font-family: var(--fuenteTexto);
+}
+
+#error-login {
+    color: red; 
+    display: block; 
+    margin-top: 10px;
 }

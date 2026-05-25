@@ -4,30 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="register.css">
-    <title>Registro</title>
+    <title>Registro - Reboot</title>
 </head>
 <body>
     <div class="contenedorDerecha">
         <h1>Registro</h1>
-        <form class="containerForm">
+        <form class="containerForm" id="form-register">
             <div class="datosRegistro">
-                <label for="" id="nombre">Nombre: </label>
-                <input type="text" id="nombre" placeholder="Ingrese su nombre (usuario)">
-                <label for="" id="fechaNacimiento">Fecha de nacimiento:</label>
-                <input type="date" id="fechaNacimiento" placeholder="Ingrese su fecha de nacimiento">
-                <label for="" id="email">Email: </label>
-                <input type="email" id="email" placeholder="Correo electronico">
-                <label for="" id="contraseña">Contraseña: </label>
-                <input type="password" id="contraseña" placeholder="Ingrese su contraseña">
-                <label for="" id="confirmarContraseña">Confirme la contraseña: </label>
-                <input type="password" id="contraseña" placeholder="Repita la contraseña">
+                <label for="nombre">Nombre: </label>
+                <input type="text" id="nombre" placeholder="Ingrese su nombre (usuario)" required>
+                
+                <label for="fechaNacimiento">Fecha de nacimiento:</label>
+                <input type="date" id="fechaNacimiento" required>
+                
+                <label for="email">Email: </label>
+                <input type="email" id="email" placeholder="Correo electrónico" required autocomplete="username">
+                
+                <label for="contrasena">Contraseña: </label>
+                <input type="password" id="contrasena" placeholder="Ingrese su contraseña" required autocomplete="new-password">
+
+                <label for="confirmarContrasena">Confirme la contraseña: </label>
+                <input type="password" id="confirmarContrasena" placeholder="Repita la contraseña" required autocomplete="new-password">    
+                
+                <small id="error-registro"></small>
             </div>
             <button type="submit" class="registrarse">Registrarse</button>
         </form>
         <div class="otrasOpciones">
-            <p>¿ya tiene una cuenta? <a href="login.html">Inicie sesión</a></p>
-        </div>
+            <p>¿Ya tiene una cuenta? <a href="login.html">Inicie sesión</a></p>
+        </div>  
     </div>
     <div class="contenedorIzquierda"></div>
+
+    <script src="register.js"></script>
 </body>
 </html>
