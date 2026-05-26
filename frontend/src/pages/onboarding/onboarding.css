@@ -64,7 +64,7 @@ label {
     justify-content: center;
     overflow-y: auto;
     padding: 0px 25px;
-    box-shadow: 0px 0px 8px 3px var(--azul);
+    border: 5px solid var(--azul);
 }
 
 .contenedor-informacion {
@@ -120,11 +120,15 @@ div .campo {
     justify-content: center;
 }
 
+.controles-formulario {
+    display: flex; 
+    justify-content: center; 
+    gap: 5%;
+}
+
 .botones {
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 10px;
-    text-align: center;
-    cursor: pointer;
     transition: 0.3s;
     background-color: var(--gris-claro);
 }
@@ -199,21 +203,21 @@ div .campo {
     transition: 0.3s;
 }
 
-#btn-siguiente.botones {
-    padding: 10px 15px;
+#btn-atras.botones, #btn-siguiente.botones{
+    width: 35%;
+    padding: 10px 0px;
     display: block;
-    margin: auto;
     color: var(--azul);
 }
 
 /* Feedback visual para selecciones estáticas */
+
 .boton-seleccion.seleccionado {
-    background-color: #000;
-    color: #fff;
-    border-color: #000;
+    background-color: var();
+    border-color: var(--azul);
 }
 .boton-seleccion.seleccionado h3 {
-    color: #fff;
+    color: var(--azul);
 }
 .error-msg {
     color: #d32f2f;

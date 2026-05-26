@@ -32,7 +32,7 @@
 
 .sidebar__titulo {
     font-family: var(--fuenteTitulos);
-    font-size: 2rem;
+    font-size: 2.5rem;
     letter-spacing: 5px;
     text-align: center;
     margin-bottom: 2rem;
@@ -61,7 +61,12 @@
 
 #user-role {
     font-family: var(--fuenteSubtitulo);
-    font-size: 1rem;
+    font-size: 0.9rem;
+}
+
+#user-name {
+    font-size: 0.8rem;
+    font-family: var(--fuenteTexto);
 }
 
 .sidebar__link:hover,
@@ -77,7 +82,7 @@
 
 /* --- Navbar --- */
 .navbar {
-    height: 65px;
+    height: 70px;
     background-color: var(--gris-oscuro);
     display: flex;
     justify-content: flex-end;
@@ -109,9 +114,9 @@
 .boton--logout-dashboard { 
     border-radius: 15px;
     background-color: var(--azul);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     color: var(--blanco);
-    padding: 10px 15px;
+    padding: 10px 20px;
     transition:
         background-color 0.3s ease,
         color 0.1s ease,
@@ -164,7 +169,7 @@
 }
 
 /* =====================================================================
-   PANELES — Estilos compartidos para todos los paneles del Dashboard
+    PANELES — Estilos compartidos para todos los paneles del Dashboard
    ===================================================================== */
 
 .panel {
@@ -172,7 +177,7 @@
     border: 2px solid var(--negro);
     border-radius: 8px;
     padding: 2rem;
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
     font-family: var(--fuenteTexto);
 }
@@ -190,8 +195,8 @@
 
 .panel__titulo {
     font-family: var(--fuenteSubtitulo);
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: bold;
     color: var(--negro);
     margin-bottom: 0;
 }
@@ -250,7 +255,7 @@
     padding: 0.5rem 0.75rem;
     border: 2px solid var(--gris-claro);
     border-radius: 5px;
-    background-color: #fff;
+    background-color: var(--blanco);
     color: var(--negro);
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
@@ -261,7 +266,6 @@
 }
 
 .panel__input:disabled {
-    background-color: #f5f5f5;
     color: var(--gris-oscuro);
     cursor: not-allowed;
 }
@@ -309,7 +313,7 @@
     font-weight: bold;
     padding: 0.6rem 1.2rem;
     border: 2px solid transparent;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     transition:
         background-color 0.3s ease,
@@ -329,14 +333,14 @@
 }
 
 .panel__boton--guardar {
-    background-color: var(--negro);
+    background-color: var(--azul);
     color: var(--blanco);
 }
 
 .panel__boton--guardar:hover {
     background-color: var(--blanco);
-    color: var(--negro);
-    border-color: var(--negro);
+    color: var(--azul);
+    border-color: var(--azul);
 }
 
 .panel__boton--cancelar {
@@ -361,13 +365,13 @@
 
 .panel__alerta--exito {
     background-color: #d4edda;
-    color: #155724;
+    color: var(--azul);
     border: 1px solid #c3e6cb;
 }
 
 .panel__alerta--error {
     background-color: #f8d7da;
-    color: #721c24;
+    color: var(--rojo);
     border: 1px solid #f5c6cb;
 }
 
@@ -377,5 +381,5 @@
     color: var(--gris-oscuro);
     text-align: right;
     margin-top: 1rem;
-    font-style: italic;
+    font-family: var(--fuenteTexto);
 }
