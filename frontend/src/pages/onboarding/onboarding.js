@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const URL_BASE = 'http://localhost:8080/RebootBackend/api';
     const FETCH_CONFIG = { method: 'GET', credentials: 'include' };
 
-    // 1. GUARD: Verificar si ya tiene perfil [cite: 639, 640]
+    // 1. GUARD: Verificar si ya tiene perfil 
     try {
         const resExiste = await fetch(`${URL_BASE}/perfil/existe`, FETCH_CONFIG);
         if (resExiste.status === 401) {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         const dataExiste = await resExiste.json();
-        // Si ya completó el onboarding, redirigir al dashboard [cite: 641]
+        // Si ya completó el onboarding, redirigir al dashboard
         if (dataExiste.ok && dataExiste.data === true) {
             window.location.href = '../dashboard/dashboard.html';
             return;
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("Error validando sesión:", error);
     }
 
-    // 2. CONFIGURAR COMPORTAMIENTO DE SELECCIÓN (Estático)
+    // 2. CONFIGURAR COMPORTAMIENTO DE SELECCIÓN DINÁMICA
     document.querySelectorAll('#contenedor-objetivos .boton-seleccion').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('#contenedor-objetivos .boton-seleccion').forEach(b => b.classList.remove('seleccionado'));
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let pasoActual = 1;
     const totalPasos = 4;
     
-    // Objeto base que espera el DTO [cite: 1067, 1068]
+    // Objeto base DTO exacto
     const dtoPerfil = { peso: null, estatura: null, idObjetivo: null, idNivel: null, limitaciones: [] };
 
     const btnSiguiente = document.getElementById('btn-siguiente');
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const formulario = document.getElementById('form-onboarding');
 
     btnSiguiente.addEventListener('click', () => {
+        // window.validarPasoActual se encarga internamente de los parseFloat/parseInt y de popular dtoPerfil
         if (window.validarPasoActual(pasoActual, dtoPerfil)) {
             document.getElementById(`paso-${pasoActual}`).style.display = 'none';
             pasoActual++;
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     formulario.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Recolectar valores estáticos de checkboxes marcados
+        // Recolectar limpiamente el arreglo de enteros desde los checkboxes
         const checkboxes = document.querySelectorAll('#contenedor-limitaciones input[type="checkbox"]:checked');
         dtoPerfil.limitaciones = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
@@ -71,11 +72,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const respuesta = await fetch(`${URL_BASE}/perfil/onboarding`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Vital para pasar JSESSIONID [cite: 644]
+                credentials: 'include', // Vital para que fluya JSESSIONID
                 body: JSON.stringify(dtoPerfil)
             });
 
             const data = await respuesta.json();
+            
+            // Redirección limpia tras éxito de persistencia
             if (data.ok) {
                 window.location.href = '../dashboard/dashboard.html';
             } else {

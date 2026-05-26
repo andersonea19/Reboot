@@ -3,47 +3,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const formLogin = document.getElementById('form-login');
     const msgError = document.getElementById('error-login');
 
-    formLogin.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        msgError.textContent = '';
+    if (formLogin) {
+        formLogin.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        // 1. Capturamos el EMAIL en lugar del nombre
-        const email = document.getElementById('email').value.trim();
-        const contrasena = document.getElementById('contrasena').value;
+            // Los IDs coinciden exactamente con login.html (#email, #contrasena)
+            const email = document.getElementById('email').value.trim();
+            const psswd = document.getElementById('contrasena').value.trim();
 
-        // 2. DTO con las claves EXACTAS que tu Java espera
-        const dtoLogin = {
-            email: email, 
-            psswd: contrasena  // es psswd
-        };
-
-        try {
-            const respuesta = await fetch(`${URL_BASE}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // ¡VITAL para la cookie JSESSIONID!
-                body: JSON.stringify(dtoLogin)
-            });
-
-            // Capturar el 400 por si acaso
-            if (!respuesta.ok && respuesta.status === 400) {
-                const dataError = await respuesta.json();
-                console.error("Error 400:", dataError);
-                msgError.textContent = "Datos incorrectos. Revisa tu email o contraseña.";
+            // Validación mínima en cliente antes de llamar al servidor
+            if (!email || !psswd) {
+                msgError.textContent = "Por favor ingrese su correo y contraseña.";
                 return;
             }
 
-            const data = await respuesta.json();
+            try {
+                const response = await fetch(`${URL_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // Obligatorio: permite que el navegador reciba y reenvíe la cookie JSESSIONID de Tomcat
+                    credentials: 'include',
+                    // Las claves email y psswd coinciden con LoginRequest.java en el backend
+                    body: JSON.stringify({ email, psswd })
+                });
 
-            if (data.ok) {
-                // ¡BINGO! Login exitoso. Nos vamos al Onboarding.
-                window.location.href = '../onboarding/onboarding.html';
-            } else {
-                msgError.textContent = data.mensaje || 'Credenciales incorrectas.';
+                const data = await response.json();
+
+                if (data.ok) {
+                    if (data.data && data.data.idRol === 2) {
+                        window.location.replace('../dashboard/dashboard.html');
+                    } else {
+                        // Redirección limpia al Onboarding; la cookie JSESSIONID ya quedó guardada
+                        window.location.replace('../onboarding/onboarding.html');
+                    }
+                } else {
+                    msgError.textContent = data.mensaje || "Credenciales incorrectas.";
+                }
+            } catch (error) {
+                console.error("Error en la conexión de login:", error);
+                msgError.textContent = "Error al conectar con el servidor.";
             }
-        } catch (error) {
-            console.error('Error en login:', error);
-            msgError.textContent = 'Error de conexión con el servidor.';
-        }
-    });
+        });
+    }
 });

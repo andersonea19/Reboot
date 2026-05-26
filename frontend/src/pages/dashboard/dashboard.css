@@ -15,6 +15,7 @@
     height: 100vh;
 }
 
+/* --- Sidebar --- */
 .sidebar {
     background-image: url(/frontend/public/assets/images/sidebar.jpg);
     background-repeat: no-repeat;
@@ -31,8 +32,8 @@
 
 .sidebar__titulo {
     font-family: var(--fuenteTitulos);
-    font-size: 1.5rem;
-    letter-spacing: 2px;
+    font-size: 2rem;
+    letter-spacing: 5px;
     text-align: center;
     margin-bottom: 2rem;
 }
@@ -49,12 +50,19 @@
     color: var(--blanco);
     padding: 10px 15px;
     display: block;
+    width: 100%;
+    text-align: left;
     cursor: pointer;
+    font-family: var(--fuenteTexto);
     transition:
         background-color 0.3s ease,
         color 0.3s ease;
 }
 
+#user-role {
+    font-family: var(--fuenteSubtitulo);
+    font-size: 1rem;
+}
 
 .sidebar__link:hover,
 .sidebar__link--active {
@@ -67,6 +75,7 @@
     margin: 1.5rem 0;
 }
 
+/* --- Navbar --- */
 .navbar {
     height: 65px;
     background-color: var(--gris-oscuro);
@@ -75,7 +84,7 @@
     align-items: center;
     gap: 10px;
     padding: 0 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px var(--negro);
 }
 
 .navbar__info {
@@ -115,6 +124,7 @@
     border: 2px solid var(--azul);
 }
 
+/* --- Vista Principal (Contenedor de Paneles) --- */
 .vista-contenedor {
     flex: 1;
     padding: 1rem;
@@ -133,6 +143,7 @@
     text-align: center;
 }
 
+/* --- Modal Overlay --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -150,4 +161,221 @@
 .modal-overlay--hidden {
     display: none;
     pointer-events: none;
+}
+
+/* =====================================================================
+   PANELES — Estilos compartidos para todos los paneles del Dashboard
+   ===================================================================== */
+
+.panel {
+    background-color: var(--blanco);
+    border: 2px solid var(--negro);
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: var(--fuenteTexto);
+}
+
+.panel--error {
+    border-color: #dc3545;
+}
+
+.panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.panel__titulo {
+    font-family: var(--fuenteSubtitulo);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--negro);
+    margin-bottom: 0;
+}
+
+.panel__subtitulo {
+    font-family: var(--fuenteSubtitulo);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gris-oscuro);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gris-claro);
+}
+
+.panel__loader {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gris-oscuro);
+    font-size: 0.75rem;
+}
+
+/* --- Formularios dentro de paneles --- */
+.panel__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.panel__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.panel__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.panel__campo--full {
+    grid-column: 1 / -1;
+}
+
+.panel__label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--negro);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.panel__input {
+    font-family: var(--fuenteTexto);
+    font-size: 0.65rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--gris-claro);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--negro);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.panel__input:focus {
+    outline: none;
+    border-color: var(--azul);
+}
+
+.panel__input:disabled {
+    background-color: #f5f5f5;
+    color: var(--gris-oscuro);
+    cursor: not-allowed;
+}
+
+.panel__texto-lectura {
+    font-size: 0.65rem;
+    color: var(--gris-oscuro);
+    padding: 0.5rem 0;
+}
+
+/* --- Checkboxes de limitaciones --- */
+.panel__checkboxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.panel__checkbox-label {
+    font-size: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    color: var(--negro);
+}
+
+.panel__checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--azul);
+    cursor: pointer;
+}
+
+/* --- Botones de panel --- */
+.panel__acciones {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.panel__boton {
+    font-family: var(--fuenteBotones);
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.panel__boton--editar {
+    background-color: var(--azul);
+    color: var(--blanco);
+}
+
+.panel__boton--editar:hover {
+    background-color: var(--blanco);
+    color: var(--azul);
+    border-color: var(--azul);
+}
+
+.panel__boton--guardar {
+    background-color: var(--negro);
+    color: var(--blanco);
+}
+
+.panel__boton--guardar:hover {
+    background-color: var(--blanco);
+    color: var(--negro);
+    border-color: var(--negro);
+}
+
+.panel__boton--cancelar {
+    background-color: var(--gris-oscuro);
+    color: var(--blanco);
+}
+
+.panel__boton--cancelar:hover {
+    background-color: var(--blanco);
+    color: var(--gris-oscuro);
+    border-color: var(--gris-oscuro);
+}
+
+/* --- Alertas de feedback --- */
+.panel__alerta {
+    font-size: 0.6rem;
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.panel__alerta--exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.panel__alerta--error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* --- Metadata del panel --- */
+.panel__meta {
+    font-size: 0.5rem;
+    color: var(--gris-oscuro);
+    text-align: right;
+    margin-top: 1rem;
+    font-style: italic;
 }
