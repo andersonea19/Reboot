@@ -1,0 +1,61 @@
+<!-- user-sidebar.html -->
+<aside class="sidebar" id="user-sidebar">
+    <nav class="sidebar__nav">
+        <!-- 1. Mi Perfil -->
+        <!-- Básico: Muestra datos físicos y un "Objetivo Único" inmutable. -->
+        <!-- Pro: Muestra datos físicos, pero sin objetivo fijo (libertad de elegirlo). -->
+        <button class="sidebar__btn" data-target="perfil">
+            <span class="sidebar__icon">👤</span>
+            <span class="sidebar__text">Mi Perfil</span>
+        </button>
+
+        <!-- 2. Generar Rutina -->
+        <!-- Básico: Flujo simple, máximo 3 grupos musculares. -->
+        <!-- Pro: Tarjetas de Instructores Virtuales temáticos. -->
+        <button class="sidebar__btn" data-target="generar-rutina">
+            <span class="sidebar__icon">⚡</span>
+            <span class="sidebar__text">Generar Rutina</span>
+        </button>
+
+        <!-- 3. Mi Rutina / Mis Rutinas (TEXTO DINÁMICO) -->
+        <!-- Básico: Accede a su única rutina activa. -->
+        <!-- Pro: Sistema de pestañas con múltiples rutinas. -->
+        <button class="sidebar__btn" data-target="mis-rutinas" id="btn-rutinas">
+            <span class="sidebar__icon">🏋️</span>
+            <span class="sidebar__text" id="text-rutinas">Mi Rutina</span>
+        </button>
+
+        <!-- 4. Historial -->
+        <!-- Ambos: Agrupa en pestañas internas el Historial Físico y el de Rutinas. -->
+        <button class="sidebar__btn" data-target="historial">
+            <span class="sidebar__icon">📈</span>
+            <span class="sidebar__text">Historial</span>
+        </button>
+
+        <!-- 5. Catálogo de Ejercicios -->
+        <!-- Ambos: Diccionario anatómico. -->
+        <button class="sidebar__btn" data-target="catalogo-ejercicios">
+            <span class="sidebar__icon">📖</span>
+            <span class="sidebar__text">Catálogo de Ejercicios</span>
+        </button>
+    </nav>
+
+    <!-- 6. Configuración -->
+    <div class="sidebar__footer">
+        <!-- Básico: Opción discreta de Suscripción para hacer upgrade -->
+        <button class="sidebar__btn sidebar__btn--upgrade" data-target="suscripcion" id="btn-upgrade" style="display: none;">
+            <span class="sidebar__icon">⭐</span>
+            <span class="sidebar__text">Suscripción (Mejorar a Pro)</span>
+        </button>
+        
+        <button class="sidebar__btn" data-target="configuracion">
+            <span class="sidebar__icon">⚙️</span>
+            <span class="sidebar__text">Configuración</span>
+        </button>
+        <!-- Ambos: Cerrar sesión (incluido aquí o en configuración) -->
+        <button class="sidebar__btn" data-target="logout">
+            <span class="sidebar__icon">🚪</span>
+            <span class="sidebar__text">Cerrar Sesión</span>
+        </button>
+    </div>
+</aside>

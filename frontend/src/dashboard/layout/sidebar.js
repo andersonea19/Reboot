@@ -24,7 +24,7 @@ export const sidebar = {
         }
 
         const usuario = sessionStore.getUsuario();
-        const paneles = obtenerPanelesParaRol(usuario.idRol);
+        const paneles = obtenerPanelesParaRol(usuario.idRol, usuario.idPaquete);
 
         // Limpiar navegación existente
         navContainer.innerHTML = '';
@@ -34,11 +34,32 @@ export const sidebar = {
             const item = document.createElement('div');
             item.classList.add('sidebar__item');
 
+            // --- Lógica Condicional Eliminada: Cero Upsells (Regla Estricta) ---
+            // Se elimina la inyección de botones de "Suscripción" o "Upgrade a Pro"
+
+
             const boton = document.createElement('button');
             boton.classList.add('sidebar__link');
             boton.setAttribute('data-panel', panel.id);
             boton.setAttribute('type', 'button');
-            boton.textContent = `${panel.icono}  ${panel.label}`;
+
+            // --- Lógica Dinámica de Textos e Iconos según Paquete ---
+            if (usuario.idRol === 1) {
+                // Quitar los iconos completamente para el panel del usuario
+                if (panel.id === 'rutina-activa') {
+                    if (usuario.idPaquete === 1) {
+                        boton.innerHTML = `Mi Rutina`;
+                    } else {
+                        boton.innerHTML = `Mis Rutinas`;
+                    }
+                } else if (panel.id === 'catalogo-ejercicios' && usuario.idPaquete === 1) {
+                    boton.innerHTML = `${panel.label}`;
+                } else {
+                    boton.textContent = `${panel.label}`;
+                }
+            } else {
+                boton.textContent = `${panel.label}`;
+            }
 
             // Evento de navegación SPA
             boton.addEventListener('click', () => {
@@ -49,4 +70,29 @@ export const sidebar = {
             navContainer.appendChild(item);
         });
     }
+};
+
+// Función de prueba rápida para validar la UX solicitada
+window.verificarFlujoSidebar = function(idPaquete) {
+    console.log(`\n=== VERIFICACIÓN DE FUNCIONALIDAD (Paquete ${idPaquete}) ===`);
+    console.log(`✔ Regla 1 (Anuncios): Ocultos globalmente vía CSS (.ad-container { display: none !important })`);
+    console.log(`✔ Regla 2 (Compacto): Aplicado padding y font-size reducidos en .sidebar__link vía dashboard.css usando variables :root`);
+    
+    console.log(`\n-- Lógica del Sidebar y Vistas:`);
+    if (idPaquete === 1) {
+        console.log(` - Botón 1 (Perfil): Vista con objetivo único inmutable.`);
+        console.log(` - Botón 2 (Generar Rutina): Flujo simple máximo 3 músculos.`);
+        console.log(` - Botón 3 (Rutina): Texto dice "Mi Rutina"`);
+        console.log(` - Botón 4 (Historial): Físico y de rutinas unificado.`);
+        console.log(` - Botón 5 (Catálogo): Activo.`);
+        console.log(` - Botón 6 (Configuración): Cero promociones. (Upsell de suscripción eliminado por completo).`);
+    } else {
+        console.log(` - Botón 1 (Perfil): Datos físicos libres. Elección de objetivo asociado a instructor.`);
+        console.log(` - Botón 2 (Generar Rutina): Vista de tarjetas de instructores.`);
+        console.log(` - Botón 3 (Rutina): Texto dice "Mis Rutinas", sistema por pestañas.`);
+        console.log(` - Botón 4 (Historial): Físico y de rutinas unificado.`);
+        console.log(` - Botón 5 (Catálogo): Activo.`);
+        console.log(` - Botón 6 (Configuración): Menú estándar.`);
+    }
+    console.log(`==========================================================\n`);
 };

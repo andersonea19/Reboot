@@ -1,0 +1,86 @@
+/* user-sidebar.css */
+
+/* REGLA ESTRICTA: Cero Anuncios - Ocultar cualquier contenedor de publicidad globalmente */
+.ad-container {
+    display: none !important;
+}
+
+/* Base del Sidebar */
+.sidebar {
+    /* Uso estricto de la paleta de colores del :root */
+    background-color: var(--negro, #000000);
+    color: var(--blanco, #ffffff);
+    
+    width: 250px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: var(--fuenteTexto, sans-serif);
+    border-right: 1px solid var(--gris-oscuro, #868484);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Contenedores de botones */
+.sidebar__nav,
+.sidebar__footer {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+}
+
+/* Diseño Compacto y Limpio para los botones */
+.sidebar__btn {
+    background: transparent;
+    border: none;
+    color: var(--blanco, #ffffff);
+    /* Padding sutil y márgenes reducidos */
+    padding: 0.6rem 1rem;
+    margin: 0.2rem 1rem;
+    text-align: left;
+    font-family: var(--fuenteBotones, sans-serif);
+    /* Fuentes compactas que no abruman */
+    font-size: 0.85rem; 
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* Efectos hover sutiles */
+.sidebar__btn:hover {
+    background-color: rgba(217, 209, 209, 0.1); /* Uso sutil de --gris-claro */
+}
+
+.sidebar__btn:active {
+    transform: scale(0.98);
+}
+
+/* Estado Activo usando el color primario (--rojo) */
+.sidebar__btn--active {
+    background-color: var(--rojo, #d70b20);
+    color: var(--blanco, #ffffff);
+    font-weight: bold;
+}
+.sidebar__btn--active:hover {
+    background-color: var(--rojo, #d70b20);
+}
+
+/* Iconografía */
+.sidebar__icon {
+    font-size: 1.1rem;
+}
+
+/* Estilo para el botón de upgrade a Pro (Suscripción) */
+.sidebar__btn--upgrade {
+    color: #ffd700; /* Color distintivo discreto pero atractivo */
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.sidebar__btn--upgrade:hover {
+    background-color: rgba(255, 215, 0, 0.1);
+}

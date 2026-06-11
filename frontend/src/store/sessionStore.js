@@ -11,6 +11,7 @@
 const _state = {
     usuarioId: null,
     idRol: null,
+    idPaquete: null,
     nombre: null
 };
 
@@ -18,17 +19,18 @@ export const sessionStore = {
 
     /**
      * Almacena los datos del usuario recuperados del backend.
-     * @param {Object} data - { usuarioId, idRol, nombre }
+     * @param {Object} data - { usuarioId, idRol, idPaquete, nombre }
      */
     setUsuario(data) {
         _state.usuarioId = data.usuarioId || null;
         _state.idRol = data.idRol || null;
+        _state.idPaquete = data.idPaquete || null;
         _state.nombre = data.nombre || null;
     },
 
     /**
      * Retorna una copia inmutable de los datos del usuario.
-     * @returns {{ usuarioId: number|null, idRol: number|null, nombre: string|null }}
+     * @returns {{ usuarioId: number|null, idRol: number|null, idPaquete: number|null, nombre: string|null }}
      */
     getUsuario() {
         return { ..._state };
@@ -53,6 +55,7 @@ export const sessionStore = {
     limpiar() {
         _state.usuarioId = null;
         _state.idRol = null;
+        _state.idPaquete = null;
         _state.nombre = null;
     }
 };

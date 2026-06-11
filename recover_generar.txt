@@ -1,0 +1,75 @@
+Created At: 2026-06-01T10:41:43Z
+Completed At: 2026-06-01T10:41:43Z
+File Path: `file:///c:/Users/murci/Documents/andersena/PROYECTOSENA/Reboot/frontend/src/dashboard/panels/user/GenerarRutinaPanel.js`
+Total Lines: 378
+Total Bytes: 19187
+Showing lines 1 to 378
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: export async function renderGenerarRutinaPanel(container) {
+2:     const URL_BASE = 'http://localhost:8080/RebootBackend/api';
+3: 
+4:     // UI principal - Skeleton inicial
+5:     container.innerHTML = `
+6:         <section class="panel" style="max-width: 800px; margin: 0 auto;">
+7:             <h2 class="panel__titulo" style="text-align: center; margin-bottom: 25px; font-size: 2rem;">Crear Nueva Rutina</h2>
+8: 
+9:             <div id="generar-alerta" style="margin-bottom: 20px; text-align: center;"></div>
+10: 
+11:             <!-- Paso 1: Selección de Instructor (SÓLO PRO) -->
+12:             <div id="paso-instructor" style="display: none; margin-bottom: 30px;">
+13:                 <h3 style="color: var(--negro); font-family: var(--fuenteTitulos); border-bottom: 2px solid var(--gris-claro); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem;">1. Elige a tu Instructor</h3>
+14:                 <div id="instructores-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; justify-content: center;">
+15:                     <!-- Tarjetas de instructores inyectadas aquí -->
+16:                 </div>
+17:                 <input type="hidden" id="idObjetivoSeleccionado" value="">
+18:             </div>
+19: 
+20:             <!-- Paso 2: Selección de Rutina y Equipamiento -->
+21:             <div id="paso-configuracion" style="display: none;">
+22:                 <h3 id="titulo-paso-config" style="color: var(--negro); font-family: var(--fuenteTitulos); border-bottom: 2px
+<truncated 17458 bytes>
+upos musculares.</span>`;
+336:             return;
+337:         }
+338: 
+339:         const payload = {
+340:             tipoRutina: tipoRutina,
+341:             equipamiento: equiposArray, // Backend recibe un List<Integer> válido
+342:             gruposMusculares: gruposArray
+343:         };
+344: 
+345:         if (isPro) {
+346:             payload.idObjetivo = parseInt(idObjetivoInput.value);
+347:         }
+348: 
+349:         btnGenerar.disabled = true;
+350:         btnGenerar.innerText = 'GENERANDO...';
+351: 
+352:         try {
+353:             const res = await fetch(`${URL_BASE}/rutinas/solicitud`, {
+354:                 method: 'POST',
+355:                 headers: { 'Content-Type': 'application/json' },
+356:                 body: JSON.stringify(payload),
+357:                 credentials: 'include'
+358:             });
+359: 
+360:             const result = await res.json();
+361: 
+362:             if (result.ok) {
+363:                 // Color verde no es rojo, el verde significa exito y es necesario. Solo "rojo" es para error, o verde para exito. El usuario dijo "solo aplica el color rojo sea necesario (errores, etc)"
+364:                 alerta.innerHTML = `<span style="color: var(--verde); font-weight: bold;">¡Rutina generada con éxito! Redirigiendo...</span>`;
+365:                 window.dispatchEvent(new CustomEvent('navegar-rutina-activa'));
+366:             } else {
+367:                 alerta.innerHTML = `<span style="color: var(--rojo); font-weight: bold;">Error 403: ${result.mensaje}</span>`;
+368:                 btnGenerar.disabled = false;
+369:                 btnGenerar.innerText = 'GENERAR RUTINA';
+370:             }
+371:         } catch (error) {
+372:             alerta.innerHTML = `<span style="color: var(--rojo);">Error de red al intentar generar la rutina.</span>`;
+373:             btnGenerar.disabled = false;
+374:             btnGenerar.innerText = 'GENERAR RUTINA';
+375:         }
+376:     });
+377: }
+378: 
+The above content shows the entire, complete file contents of the requested file.

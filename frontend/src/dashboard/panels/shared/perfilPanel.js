@@ -9,6 +9,7 @@
  *   PUT  /api/perfil/datos → Actualizar perfil
  */
 
+import { sessionStore } from '../../../store/sessionStore.js';
 const URL_BASE = 'http://localhost:8080/RebootBackend/api';
 
 /**
@@ -49,12 +50,14 @@ export async function renderPerfilPanel(container) {
         }
 
         const perfil = json.data;
+        const usuario = sessionStore.getUsuario();
+        const isPro = usuario.idPaquete === 2;
 
         // 3. Renderizar formulario en modo lectura
-        container.innerHTML = _construirFormulario(perfil, false);
+        container.innerHTML = _construirFormulario(perfil, false, isPro);
 
         // 4. Asociar eventos
-        _asociarEventos(container, perfil);
+        _asociarEventos(container, perfil, isPro);
 
     } catch (error) {
         console.error('[PerfilPanel] Error:', error);
@@ -72,7 +75,7 @@ export async function renderPerfilPanel(container) {
  * @param {Object} perfil - Datos del perfil desde el backend
  * @param {boolean} editable - Si los campos deben estar habilitados
  */
-function _construirFormulario(perfil, editable) {
+function _construirFormulario(perfil, editable, isPro) {
     const disabled = editable ? '' : 'disabled';
     const limitacionesTexto = perfil.limitacionesDetalle && perfil.limitacionesDetalle.length > 0
         ? perfil.limitacionesDetalle.map(l => l.nombre).join(', ')
@@ -82,7 +85,10 @@ function _construirFormulario(perfil, editable) {
         <section class="panel">
             <div class="panel__header">
                 <h2 class="panel__titulo">Mi Perfil Físico</h2>
-                ${!editable ? '<button type="button" class="panel__boton panel__boton--editar" id="btn-editar-perfil">Editar Perfil</button>' : ''}
+                <div style="display: flex; gap: 10px;">
+                    ${isPro ? '<button type="button" class="panel__boton" id="btn-cancelar-suscripcion" style="background-color: var(--rojo); color: var(--blanco);">Cancelar Suscripción</button>' : ''}
+                    ${!editable ? '<button type="button" class="panel__boton panel__boton--editar" id="btn-editar-perfil">Editar Perfil</button>' : ''}
+                </div>
             </div>
 
             <div id="perfil-alerta"></div>
@@ -101,6 +107,7 @@ function _construirFormulario(perfil, editable) {
                                value="${perfil.estatura ? (perfil.estatura * 100).toFixed(1) : ''}" ${disabled}>
                     </div>
 
+                    ${!isPro ? `
                     <div class="panel__campo">
                         <label class="panel__label" for="perfil-objetivo">Objetivo</label>
                         <select class="panel__input" id="perfil-objetivo" ${disabled}>
@@ -110,6 +117,7 @@ function _construirFormulario(perfil, editable) {
                             <option value="4" ${perfil.idObjetivo === 4 ? 'selected' : ''}>Movilidad</option>
                         </select>
                     </div>
+                    ` : ''}
 
                     <div class="panel__campo">
                         <label class="panel__label" for="perfil-nivel">Nivel</label>
@@ -171,13 +179,46 @@ function _construirCheckboxLimitaciones(limitacionesActivas) {
 /**
  * Asocia los eventos del panel (editar, cancelar, guardar).
  */
-function _asociarEventos(container, perfilOriginal) {
+function _asociarEventos(container, perfilOriginal, isPro) {
     // Botón Editar
     const btnEditar = container.querySelector('#btn-editar-perfil');
     if (btnEditar) {
         btnEditar.addEventListener('click', () => {
-            container.innerHTML = _construirFormulario(perfilOriginal, true);
-            _asociarEventosEdicion(container, perfilOriginal);
+            container.innerHTML = _construirFormulario(perfilOriginal, true, isPro);
+            _asociarEventosEdicion(container, perfilOriginal, isPro);
+        });
+    }
+
+    // Botón Cancelar Suscripción
+    const btnCancelarSuscripcion = container.querySelector('#btn-cancelar-suscripcion');
+    if (btnCancelarSuscripcion) {
+        btnCancelarSuscripcion.addEventListener('click', async () => {
+            if (confirm('¿Estás seguro que deseas cancelar tu suscripción? Se eliminarán todas las rutinas generadas para este plan.')) {
+                try {
+                    const resp = await fetch(`${URL_BASE}/suscripcion/cancelar`, { method: 'POST', credentials: 'include' });
+                    const result = await resp.json();
+                    
+                    if (result.ok) {
+                        const usuario = sessionStore.getUsuario();
+                        usuario.idPaquete = 1;
+                        sessionStore.setUsuario(usuario);
+                        alert('Suscripción cancelada con éxito. Has vuelto al plan básico.');
+                        
+                        // Redirect to rutinas-basicas if they are currently on a pro-specific panel, else reload
+                        if (location.hash === '#rutinas-pro') {
+                            location.hash = '#rutinas-basicas';
+                            location.reload();
+                        } else {
+                            location.reload();
+                        }
+                    } else {
+                        alert(result.mensaje || 'Error al cancelar la suscripción.');
+                    }
+                } catch (e) {
+                    console.error('Error cancelando suscripción:', e);
+                    alert('Ocurrió un error al intentar cancelar la suscripción.');
+                }
+            }
         });
     }
 }
@@ -185,13 +226,13 @@ function _asociarEventos(container, perfilOriginal) {
 /**
  * Asocia los eventos del modo edición (cancelar, submit).
  */
-function _asociarEventosEdicion(container, perfilOriginal) {
+function _asociarEventosEdicion(container, perfilOriginal, isPro) {
     // Botón Cancelar → volver a modo lectura
     const btnCancelar = container.querySelector('#btn-cancelar-perfil');
     if (btnCancelar) {
         btnCancelar.addEventListener('click', () => {
-            container.innerHTML = _construirFormulario(perfilOriginal, false);
-            _asociarEventos(container, perfilOriginal);
+            container.innerHTML = _construirFormulario(perfilOriginal, false, isPro);
+            _asociarEventos(container, perfilOriginal, isPro);
         });
     }
 
@@ -213,7 +254,8 @@ async function _guardarPerfil(container) {
 
     const peso = parseFloat(document.getElementById('perfil-peso').value);
     const estatura = parseFloat(document.getElementById('perfil-estatura').value);
-    const idObjetivo = parseInt(document.getElementById('perfil-objetivo').value);
+    const perfilObjetivoEl = document.getElementById('perfil-objetivo');
+    const idObjetivo = perfilObjetivoEl ? parseInt(perfilObjetivoEl.value) : null; // PRO no tiene objetivo fijo
     const idNivel = parseInt(document.getElementById('perfil-nivel').value);
 
     // Recolectar limitaciones seleccionadas
@@ -221,8 +263,18 @@ async function _guardarPerfil(container) {
     const limitaciones = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
     // Validación client-side
-    if (!peso || !estatura || !idObjetivo || !idNivel) {
+    if (!peso || !estatura || (!idObjetivo && perfilObjetivoEl) || !idNivel) {
         alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--error">Completa todos los campos obligatorios.</div>';
+        return;
+    }
+
+    if (isNaN(peso) || peso < 20 || peso > 300) {
+        alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--error">Por favor, ingresa un peso válido (entre 20 kg y 300 kg).</div>';
+        return;
+    }
+
+    if (isNaN(estatura) || estatura < 50 || estatura > 250) {
+        alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--error">Por favor, ingresa una estatura válida (entre 50 cm y 250 cm).</div>';
         return;
     }
 

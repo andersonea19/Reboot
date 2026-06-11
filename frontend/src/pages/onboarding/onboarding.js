@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const FETCH_CONFIG = { method: 'GET', credentials: 'include' };
 
     // 1. GUARD: Verificar si ya tiene perfil 
+    let isPro = localStorage.getItem('registroPro') === 'true';
+
     try {
         const resExiste = await fetch(`${URL_BASE}/perfil/existe`, FETCH_CONFIG);
         if (resExiste.status === 401) {
@@ -11,9 +13,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const dataExiste = await resExiste.json();
         // Si ya completó el onboarding, redirigir al dashboard
-        if (dataExiste.ok && dataExiste.data === true) {
+        if (dataExiste.ok && dataExiste.data.existe === true) {
             window.location.href = '../dashboard/dashboard.html';
             return;
+        }
+        // Determinar si es Pro desde el backend (fuente de verdad)
+        if (dataExiste.ok && dataExiste.data.idPaquete === 2) {
+            isPro = true;
         }
     } catch (error) {
         console.error("Error validando sesión:", error);
@@ -50,14 +56,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         // window.validarPasoActual se encarga internamente de los parseFloat/parseInt y de popular dtoPerfil
         if (window.validarPasoActual(pasoActual, dtoPerfil)) {
             document.getElementById(`paso-${pasoActual}`).style.display = 'none';
-            pasoActual++;
+            if (isPro && pasoActual === 1) {
+                pasoActual = 3;
+            } else {
+                pasoActual++;
+            }
             actualizarVista();
         }
     });
 
     btnAtras.addEventListener('click', () => {
         document.getElementById(`paso-${pasoActual}`).style.display = 'none';
-        pasoActual--;
+        if (isPro && pasoActual === 3) {
+            pasoActual = 1;
+        } else {
+            pasoActual--;
+        }
         actualizarVista();
     });
 
@@ -80,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Redirección limpia tras éxito de persistencia
             if (data.ok) {
+                localStorage.removeItem('registroPro');
                 window.location.href = '../dashboard/dashboard.html';
             } else {
                 alert("Error: " + data.mensaje);
