@@ -62,40 +62,7 @@ export const dashboardRouter = {
         // 3. Ejecutar render del panel destino
         this._panelActual = panelId;
         
-        // --- VERIFICACIÓN LÓGICA DE NEGOCIO Y RESTRICCIONES ---
-        try {
-            // Importación dinámica local para evitar ciclos si es necesario, o usando global/session
-            const sessionStore = (await import('../../store/sessionStore.js')).sessionStore;
-            const usuario = sessionStore.getUsuario();
-            
-            console.log(`\n[SPA Router] Renderizando vista: "${panelId}"`);
-            
-            if (usuario && usuario.idRol === 1) {
-                switch(panelId) {
-                    case 'perfil':
-                        if (usuario.idPaquete === 1) console.log(' -> [Básico] Mostrando objetivo único inmutable.');
-                        else console.log(' -> [Pro] Mostrando datos físicos libres para elección de objetivo asociado a instructor.');
-                        break;
-                    case 'generar-rutina':
-                        if (usuario.idPaquete === 1) console.log(' -> [Básico] Flujo simple: Máximo 3 músculos permitidos.');
-                        else console.log(' -> [Pro] Renderizando vista de tarjetas de Instructores Virtuales.');
-                        break;
-                    case 'rutina-activa':
-                        if (usuario.idPaquete === 1) console.log(' -> [Básico] 1 rutina activa.');
-                        else console.log(' -> [Pro] Múltiples rutinas por pestañas.');
-                        break;
-                    case 'historial-rutinas':
-                        console.log(' -> [Común] Unificando Historial Físico y de Rutinas en esta vista.');
-                        break;
-                    case 'catalogo-ejercicios':
-                        console.log(' -> [Común] Vista compartida de Catálogo.');
-                        break;
-                }
-            }
-        } catch (e) {
-            console.warn('[Router] No se pudo cargar sessionStore para validación de logs:', e);
-        }
-        // -----------------------------------------------------
+
 
         try {
             await renderFn(container);

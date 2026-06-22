@@ -324,6 +324,29 @@
     cursor: pointer;
 }
 
+.boton-limitacion {
+    border-radius: 20px;
+    padding: 10px;
+    transition: 0.3s;
+    background-color: var(--gris-claro);
+    color: var(--negro);
+    font-family: var(--fuenteBotones);
+    font-size: 0.6rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.boton-limitacion:hover {
+    border-color: var(--azul);
+    transform: translateY(-3px);
+}
+
+.boton-limitacion.seleccionado {
+    background-color: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
+}
+
 .panel__boton--editar {
     background-color: var(--azul);
     color: var(--blanco);

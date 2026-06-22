@@ -1,20 +1,20 @@
 /**
  * perfilPanel.js — Panel de Perfil Físico del Dashboard SPA.
  * 
- * Renderiza los datos del perfil físico del usuario en modo lectura,
- * con la opción de habilitar edición y guardar cambios.
- * 
+ * Esquema desnormalizado:
+ *   - idLimitacion es un solo campo (select, no checkboxes).
+ *
  * Endpoints consumidos:
  *   GET  /api/perfil/datos → Recuperar perfil completo
  *   PUT  /api/perfil/datos → Actualizar perfil
  */
 
 import { sessionStore } from '../../../store/sessionStore.js';
+import { modal } from '../../../modules/modal.js';
 const URL_BASE = 'http://localhost:8080/RebootBackend/api';
 
 /**
  * Función de renderizado del panel de perfil.
- * Se registra en el dashboardRouter y se invoca al navegar.
  * @param {HTMLElement} container - Contenedor #dashboard-view
  */
 export async function renderPerfilPanel(container) {
@@ -72,13 +72,12 @@ export async function renderPerfilPanel(container) {
 
 /**
  * Construye el HTML del formulario de perfil.
- * @param {Object} perfil - Datos del perfil desde el backend
- * @param {boolean} editable - Si los campos deben estar habilitados
+ * Esquema aplanado: limitaciones es un arreglo de selección múltiple.
  */
 function _construirFormulario(perfil, editable, isPro) {
     const disabled = editable ? '' : 'disabled';
-    const limitacionesTexto = perfil.limitacionesDetalle && perfil.limitacionesDetalle.length > 0
-        ? perfil.limitacionesDetalle.map(l => l.nombre).join(', ')
+    const limitacionTexto = (perfil.limitaciones && perfil.limitaciones.length > 0)
+        ? perfil.limitaciones.map(l => l.nombreLimitacion).join(', ')
         : 'Ninguna';
 
     return `
@@ -111,9 +110,9 @@ function _construirFormulario(perfil, editable, isPro) {
                     <div class="panel__campo">
                         <label class="panel__label" for="perfil-objetivo">Objetivo</label>
                         <select class="panel__input" id="perfil-objetivo" ${disabled}>
-                            <option value="1" ${perfil.idObjetivo === 1 ? 'selected' : ''}>Fuerza</option>
-                            <option value="2" ${perfil.idObjetivo === 2 ? 'selected' : ''}>Hipertrofia</option>
-                            <option value="3" ${perfil.idObjetivo === 3 ? 'selected' : ''}>Resistencia</option>
+                            <option value="1" ${perfil.idObjetivo === 1 ? 'selected' : ''}>Hipertrofia</option>
+                            <option value="2" ${perfil.idObjetivo === 2 ? 'selected' : ''}>Resistencia</option>
+                            <option value="3" ${perfil.idObjetivo === 3 ? 'selected' : ''}>Fuerza</option>
                             <option value="4" ${perfil.idObjetivo === 4 ? 'selected' : ''}>Movilidad</option>
                         </select>
                     </div>
@@ -129,10 +128,12 @@ function _construirFormulario(perfil, editable, isPro) {
                     </div>
                 </div>
 
-                <div class="panel__campo panel__campo--full">
-                    <label class="panel__label">Limitaciones Físicas</label>
-                    ${editable ? _construirCheckboxLimitaciones(perfil.limitaciones || []) : 
-                        `<p class="panel__texto-lectura">${limitacionesTexto}</p>`}
+                <div class="panel__grid">
+                    <div class="panel__campo">
+                        <label class="panel__label">Limitaciones Físicas</label>
+                        ${editable ? _construirCheckboxesLimitacion(perfil.limitaciones) :
+                            `<p class="panel__texto-lectura">${limitacionTexto}</p>`}
+                    </div>
                 </div>
 
                 ${editable ? `
@@ -151,26 +152,23 @@ function _construirFormulario(perfil, editable, isPro) {
 }
 
 /**
- * Construye los checkboxes de limitaciones para modo edición.
+ * Construye los botones de selección múltiple para limitaciones en modo edición.
  */
-function _construirCheckboxLimitaciones(limitacionesActivas) {
-    const todasLimitaciones = [
-        { id: 1, nombre: 'Lesión de rodilla' },
+function _construirCheckboxesLimitacion(limitacionesActivas) {
+    const limitaciones = [
+        { id: 1, nombre: 'Lesión de muñeca' },
         { id: 2, nombre: 'Lesión de hombro' },
-        { id: 3, nombre: 'Lesión de muñeca' },
-        { id: 4, nombre: 'Lesión de espalda baja' },
-        { id: 5, nombre: 'Lesión de codo' },
-        { id: 6, nombre: 'Hipertensión' }
+        { id: 3, nombre: 'Lesión de codo' },
+        { id: 4, nombre: 'Lesión de rodilla' },
+        { id: 5, nombre: 'Lesión lumbar' }
     ];
 
+    const idsActivos = limitacionesActivas ? limitacionesActivas.map(l => l.idLimitacion) : [];
+
     return `
-        <div class="panel__checkboxes">
-            ${todasLimitaciones.map(lim => `
-                <label class="panel__checkbox-label">
-                    <input type="checkbox" class="panel__checkbox" name="limitacion" value="${lim.id}"
-                           ${limitacionesActivas.includes(lim.id) ? 'checked' : ''}>
-                    ${lim.nombre}
-                </label>
+        <div id="perfil-limitaciones-container" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;">
+            ${limitaciones.map(lim => `
+                <button type="button" class="botones botones--nivel boton-limitacion ${idsActivos.includes(lim.id) ? 'seleccionado' : ''}" data-id="${lim.id}">${lim.nombre}</button>
             `).join('')}
         </div>
     `;
@@ -180,7 +178,6 @@ function _construirCheckboxLimitaciones(limitacionesActivas) {
  * Asocia los eventos del panel (editar, cancelar, guardar).
  */
 function _asociarEventos(container, perfilOriginal, isPro) {
-    // Botón Editar
     const btnEditar = container.querySelector('#btn-editar-perfil');
     if (btnEditar) {
         btnEditar.addEventListener('click', () => {
@@ -189,35 +186,33 @@ function _asociarEventos(container, perfilOriginal, isPro) {
         });
     }
 
-    // Botón Cancelar Suscripción
     const btnCancelarSuscripcion = container.querySelector('#btn-cancelar-suscripcion');
     if (btnCancelarSuscripcion) {
         btnCancelarSuscripcion.addEventListener('click', async () => {
-            if (confirm('¿Estás seguro que deseas cancelar tu suscripción? Se eliminarán todas las rutinas generadas para este plan.')) {
-                try {
-                    const resp = await fetch(`${URL_BASE}/suscripcion/cancelar`, { method: 'POST', credentials: 'include' });
-                    const result = await resp.json();
-                    
-                    if (result.ok) {
-                        const usuario = sessionStore.getUsuario();
-                        usuario.idPaquete = 1;
-                        sessionStore.setUsuario(usuario);
-                        alert('Suscripción cancelada con éxito. Has vuelto al plan básico.');
-                        
-                        // Redirect to rutinas-basicas if they are currently on a pro-specific panel, else reload
-                        if (location.hash === '#rutinas-pro') {
-                            location.hash = '#rutinas-basicas';
-                            location.reload();
-                        } else {
-                            location.reload();
-                        }
+            const ok = await modal.confirmar('¿Estás seguro que deseas cancelar tu suscripción? Se eliminarán todas las rutinas generadas para este plan.');
+            if (!ok) return;
+            try {
+                const resp = await fetch(`${URL_BASE}/suscripcion/cancelar`, { method: 'POST', credentials: 'include' });
+                const result = await resp.json();
+
+                if (result.ok) {
+                    const usuario = sessionStore.getUsuario();
+                    usuario.idPaquete = 1;
+                    sessionStore.setUsuario(usuario);
+                    await modal.info('Suscripción cancelada con éxito. Has vuelto al plan básico.');
+
+                    if (location.hash === '#rutinas-pro') {
+                        location.hash = '#rutinas-basicas';
+                        location.reload();
                     } else {
-                        alert(result.mensaje || 'Error al cancelar la suscripción.');
+                        location.reload();
                     }
-                } catch (e) {
-                    console.error('Error cancelando suscripción:', e);
-                    alert('Ocurrió un error al intentar cancelar la suscripción.');
+                } else {
+                    await modal.error(result.mensaje || 'Error al cancelar la suscripción.');
                 }
+            } catch (e) {
+                console.error('Error cancelando suscripción:', e);
+                await modal.error('Ocurrió un error al intentar cancelar la suscripción.');
             }
         });
     }
@@ -227,7 +222,6 @@ function _asociarEventos(container, perfilOriginal, isPro) {
  * Asocia los eventos del modo edición (cancelar, submit).
  */
 function _asociarEventosEdicion(container, perfilOriginal, isPro) {
-    // Botón Cancelar → volver a modo lectura
     const btnCancelar = container.querySelector('#btn-cancelar-perfil');
     if (btnCancelar) {
         btnCancelar.addEventListener('click', () => {
@@ -236,7 +230,6 @@ function _asociarEventosEdicion(container, perfilOriginal, isPro) {
         });
     }
 
-    // Submit del formulario → PUT al backend
     const form = container.querySelector('#form-perfil');
     if (form) {
         form.addEventListener('submit', async (e) => {
@@ -244,10 +237,26 @@ function _asociarEventosEdicion(container, perfilOriginal, isPro) {
             await _guardarPerfil(container);
         });
     }
+
+    const botonesLimitacion = container.querySelectorAll('#perfil-limitaciones-container .boton-limitacion');
+    botonesLimitacion.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const isSelected = btn.classList.contains('seleccionado');
+            if (!isSelected) {
+                const seleccionados = container.querySelectorAll('#perfil-limitaciones-container .boton-limitacion.seleccionado');
+                if (seleccionados.length >= 3) {
+                    await modal.error('Por tu seguridad, solo puedes seleccionar un máximo de 3 limitaciones físicas. Si presentas más condiciones, te sugerimos consultar con un especialista.');
+                    return;
+                }
+            }
+            btn.classList.toggle('seleccionado');
+        });
+    });
 }
 
 /**
  * Envía los datos actualizados del perfil al backend.
+ * Esquema aplanado: envía idLimitacion (int o null).
  */
 async function _guardarPerfil(container) {
     const alertaEl = container.querySelector('#perfil-alerta');
@@ -255,12 +264,12 @@ async function _guardarPerfil(container) {
     const peso = parseFloat(document.getElementById('perfil-peso').value);
     const estatura = parseFloat(document.getElementById('perfil-estatura').value);
     const perfilObjetivoEl = document.getElementById('perfil-objetivo');
-    const idObjetivo = perfilObjetivoEl ? parseInt(perfilObjetivoEl.value) : null; // PRO no tiene objetivo fijo
+    const idObjetivo = perfilObjetivoEl ? parseInt(perfilObjetivoEl.value) : null;
     const idNivel = parseInt(document.getElementById('perfil-nivel').value);
 
-    // Recolectar limitaciones seleccionadas
-    const checkboxes = container.querySelectorAll('input[name="limitacion"]:checked');
-    const limitaciones = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    // Limitaciones (múltiple)
+    const limitacionBtns = container.querySelectorAll('#perfil-limitaciones-container .boton-limitacion.seleccionado');
+    const idsLimitaciones = Array.from(limitacionBtns).map(b => parseInt(b.dataset.id));
 
     // Validación client-side
     if (!peso || !estatura || (!idObjetivo && perfilObjetivoEl) || !idNivel) {
@@ -283,14 +292,13 @@ async function _guardarPerfil(container) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ peso, estatura, idObjetivo, idNivel, limitaciones })
+            body: JSON.stringify({ peso, estatura, idObjetivo, idNivel, idsLimitaciones })
         });
 
         const json = await respuesta.json();
 
         if (json.ok) {
             alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--exito">Perfil actualizado correctamente.</div>';
-            // Recargar panel con datos actualizados después de 1.5s
             setTimeout(() => {
                 renderPerfilPanel(container);
             }, 1500);

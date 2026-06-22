@@ -34,13 +34,13 @@ export async function renderConfiguracionPanel(container) {
                 <div class="panel__campo">
                     <label class="panel__label" for="password-nueva">Nueva Contraseña</label>
                     <input class="panel__input" type="password" id="password-nueva" 
-                           placeholder="Mínimo 6 caracteres" required minlength="6">
+                           placeholder="Mínimo 8 caracteres" required minlength="8">
                 </div>
 
                 <div class="panel__campo">
                     <label class="panel__label" for="password-confirmar">Confirmar Nueva Contraseña</label>
                     <input class="panel__input" type="password" id="password-confirmar" 
-                           placeholder="Repite la nueva contraseña" required minlength="6">
+                           placeholder="Repite la nueva contraseña" required minlength="8">
                 </div>
 
                 <div class="panel__acciones">
@@ -81,8 +81,8 @@ async function _ejecutarCambioPassword(container) {
         return;
     }
 
-    if (nueva.length < 6) {
-        alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--error">La nueva contraseña debe tener al menos 6 caracteres.</div>';
+    if (nueva.length < 8) {
+        alertaEl.innerHTML = '<div class="panel__alerta panel__alerta--error">La nueva contraseña debe tener al menos 8 caracteres.</div>';
         return;
     }
 

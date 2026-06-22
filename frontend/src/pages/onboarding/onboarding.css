@@ -212,12 +212,13 @@ div .campo {
 
 /* Feedback visual para selecciones estáticas */
 
-.boton-seleccion.seleccionado {
-    background-color: var();
+.boton-seleccion.seleccionado, .boton-limitacion.seleccionado {
+    background-color: var(--azul);
     border-color: var(--azul);
+    color: var(--blanco);
 }
-.boton-seleccion.seleccionado h3 {
-    color: var(--azul);
+.boton-seleccion.seleccionado h3, .boton-limitacion.seleccionado h3 {
+    color: var(--blanco);
 }
 .error-msg {
     color: #d32f2f;

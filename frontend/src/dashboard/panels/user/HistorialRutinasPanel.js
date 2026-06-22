@@ -84,8 +84,15 @@ export async function renderHistorialRutinasPanel(container) {
         }
 
         const formatoFecha = (fechaHora) => {
-            if (!fechaHora || fechaHora === 'N/A') return '---';
-            return fechaHora.split(' ')[0].split('T')[0];
+            if (!fechaHora || fechaHora === 'N/A') return 'N/A';
+            const d = new Date(fechaHora);
+            if (!isNaN(d.getTime())) {
+                const dia = String(d.getDate()).padStart(2, '0');
+                const mes = String(d.getMonth() + 1).padStart(2, '0');
+                const anio = d.getFullYear();
+                return `${dia}/${mes}/${anio}`;
+            }
+            return fechaHora;
         };
 
         rutinas.sort((a, b) => b.id - a.id).forEach(r => {
@@ -96,7 +103,7 @@ export async function renderHistorialRutinasPanel(container) {
             if (estadoStr === 'abandonada') badgeClass = 'badge-abandonada';
             
             let startDate = r.fechaInicio || r.fechaCreacion;
-            let endDate = r.fechaFin || r.fechaActualizacion || r.fechaCancelacion;
+            let endDate = r.fechaCulminacion || r.fechaFin || r.fechaActualizacion || r.fechaCancelacion;
             
             // Fallback si no hay fechaFin y la rutina fue completada o abandonada, mostramos la de inicio
             if (!endDate || endDate === 'N/A') {

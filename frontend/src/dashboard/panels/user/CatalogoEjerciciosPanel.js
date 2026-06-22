@@ -115,7 +115,9 @@ export async function renderCatalogoEjerciciosPanel(container) {
         const idGrupo = selectGrupoMuscular.value;
 
         const filtrados = ejercicios.filter(ej => {
-            const matchTxt = ej.nombre.toLowerCase().includes(txt) || (ej.descripcion || '').toLowerCase().includes(txt);
+            const matchTxt = ej.nombre.toLowerCase().includes(txt) || 
+                             (ej.descripcion || '').toLowerCase().includes(txt) || 
+                             (ej.instrucciones || '').toLowerCase().includes(txt);
             
             let matchGrupo = true;
             if (idGrupo !== '') {
@@ -147,7 +149,7 @@ export async function renderCatalogoEjerciciosPanel(container) {
             card.innerHTML = `
                 <h3 class="card__titulo">${ej.nombre}</h3>
                 <div><span class="card__etiqueta">${gruposTxt}</span></div>
-                <p class="card__desc">${ej.descripcion || 'Sin descripción detallada.'}</p>
+                <p class="card__desc">${ej.descripcion || ej.instrucciones || 'Sin descripción detallada.'}</p>
             `;
             gridEjercicios.appendChild(card);
         });

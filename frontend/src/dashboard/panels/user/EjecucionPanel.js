@@ -5,6 +5,8 @@
  * @param {HTMLElement} container - El cajón donde se inyectará la vista.
  * @param {Object} diaRutina - Los datos del día actual (ejercicios, series, reps).
  */
+import { modal } from '../../../modules/modal.js';
+
 export async function renderEjecucionPanel(container, diaRutina) {
     if (!diaRutina) {
         container.innerHTML = '<div style="color: var(--rojo); padding: 20px;">Error: No se recibió la información del día.</div>';
@@ -85,13 +87,13 @@ export async function renderEjecucionPanel(container, diaRutina) {
                     btn.style.cursor = 'not-allowed';
                     card.style.opacity = '0.6';
                 } else {
-                    alert('Error: ' + json.mensaje);
+                    await modal.error('Error: ' + json.mensaje);
                     btn.disabled = false;
                     btn.innerText = 'Marcar Completado';
                 }
             } catch (error) {
                 console.error(error);
-                alert('Error de red al marcar como completado.');
+                await modal.error('Error de red al marcar como completado.');
                 btn.disabled = false;
                 btn.innerText = 'Marcar Completado';
             }

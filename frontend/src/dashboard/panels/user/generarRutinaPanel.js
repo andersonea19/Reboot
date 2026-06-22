@@ -1,28 +1,24 @@
 import { sessionStore } from '../../../store/sessionStore.js';
+import { modal } from '../../../modules/modal.js';
 
 /**
- * Panel de Generación de Rutinas — Lógica Freemium
+ * Panel de Generación de Rutinas — Lógica Freemium (Esquema Aplanado)
+ *
+ * PAYLOAD SIMPLIFICADO:
+ *   { gruposMusculares: [int], idEquipamiento: int, idObjetivo?: int }
+ *   El tipoRutina e idLimitacion se obtienen del perfilFisico en el backend.
  *
  * BASIC  (idPaquete=1):
  *   - NO se muestran tarjetas de instructores.
- *   - Máximo 3 grupos musculares (Semanal) / 1 grupo (Diaria).
  *   - El idObjetivo se extrae automáticamente del perfilFisico.
- *   - Si no tiene objetivo configurado, se bloquea la interfaz con alerta.
  *
  * PRO  (idPaquete=2):
- *   - Se renderiza un catálogo dinámico de tarjetas de Instructores Virtuales.
+ *   - Se renderiza un catálogo de Instructores Virtuales.
  *   - DEBE seleccionar un instructor antes de generar.
- *   - Mismo límite de grupos musculares que Basic (3 máximo Semanal).
- *   - El idObjetivo seleccionado se envía al backend como payload.
- *
- * @param {HTMLElement} container - Contenedor del panel en el dashboard.
  */
 export async function renderGenerarRutinaPanel(container) {
     const URL_BASE = 'http://localhost:8080/RebootBackend/api';
 
-    // -------------------------------------------------------------------------
-    // Estructura HTML del panel con estilos encapsulados
-    // -------------------------------------------------------------------------
     container.innerHTML = `
         <style>
             .gen-panel { font-family: var(--fuenteTexto); background: var(--blanco); border-radius: 12px; border: 2px solid var(--negro); padding: 2rem; max-width: 1000px; margin: 0 auto; }
@@ -56,14 +52,13 @@ export async function renderGenerarRutinaPanel(container) {
             /* Indicador de selección */
             .muscle-counter { text-align: center; font-family: var(--fuenteSubtitulo); font-size: 0.9rem; color: var(--gris-oscuro); margin-bottom: 10px; }
 
-            /* Alerta de bloqueo para Basic sin objetivo */
+            /* Alerta de bloqueo */
             .alerta-bloqueo { background: #fff3f3; border: 2px solid var(--rojo); border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem; font-family: var(--fuenteTexto); font-size: 0.95rem; color: var(--rojo); }
         </style>
 
         <section class="gen-panel">
             <h2 class="panel__titulo" style="text-align: center;">Crear Nueva Rutina</h2>
 
-            <!-- Área de alertas y mensajes del sistema -->
             <div id="generar-alerta" style="margin-bottom: 20px; text-align: center; font-family: var(--fuenteSubtitulo); font-size: 1.1rem;"></div>
 
             <!-- PASO 1: Selección de Instructor (EXCLUSIVO PARA PRO) -->
@@ -73,14 +68,14 @@ export async function renderGenerarRutinaPanel(container) {
                 <input type="hidden" id="idObjetivoSeleccionado" value="">
             </div>
 
-            <!-- PASO 2: Configuración de Rutina (Tipo, Equipamiento, Músculos) -->
+            <!-- PASO 2: Configuración de Rutina (Equipamiento, Músculos) -->
             <div id="paso-configuracion" style="display: none;">
                 <h3 class="gen-subtitulo" id="titulo-paso-config">Configura tu Rutina</h3>
 
                 <div style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 240px;">
-                        <label class="gen-label" for="tipoRutina">Tipo de Rutina:</label>
-                        <select id="tipoRutina" class="gen-select">
+                        <label class="gen-label" for="tipoRutinaSelect">Tipo de Rutina:</label>
+                        <select id="tipoRutinaSelect" class="gen-select">
                             <option value="Diaria">Diaria</option>
                             <option value="Semanal">Semanal</option>
                         </select>
@@ -98,7 +93,7 @@ export async function renderGenerarRutinaPanel(container) {
                     <header class="muscle-selector__header">
                         <h3 class="muscle-selector__title">Grupos Musculares</h3>
                     </header>
-                    <p class="muscle-counter" id="muscle-counter">Selecciona 1 grupo muscular.</p>
+                    <p class="muscle-counter" id="muscle-counter">Selecciona grupos musculares.</p>
                     <div id="grupos-musculares-container" class="muscle-selector__grid"></div>
                 </div>
 
@@ -110,42 +105,38 @@ export async function renderGenerarRutinaPanel(container) {
     // -------------------------------------------------------------------------
     // Referencias al DOM
     // -------------------------------------------------------------------------
-    const alertaDiv          = document.getElementById('generar-alerta');
-    const pasoInstructor     = document.getElementById('paso-instructor');
-    const pasoConfiguracion  = document.getElementById('paso-configuracion');
-    const instructoresGrid   = document.getElementById('instructores-grid');
-    const idObjetivoInput    = document.getElementById('idObjetivoSeleccionado');
-    const gruposContainer    = document.getElementById('grupos-musculares-container');
+    const alertaDiv = document.getElementById('generar-alerta');
+    const pasoInstructor = document.getElementById('paso-instructor');
+    const pasoConfiguracion = document.getElementById('paso-configuracion');
+    const instructoresGrid = document.getElementById('instructores-grid');
+    const idObjetivoInput = document.getElementById('idObjetivoSeleccionado');
+    const gruposContainer = document.getElementById('grupos-musculares-container');
     const equipamientoSelect = document.getElementById('equipamientoSelect');
-    const tipoRutinaSelect   = document.getElementById('tipoRutina');
-    const btnGenerar         = document.getElementById('btn-generar');
-    const descMusculo        = document.getElementById('desc-musculo');
-    const muscleCounter      = document.getElementById('muscle-counter');
+    const btnGenerar = document.getElementById('btn-generar');
+    const muscleCounter = document.getElementById('muscle-counter');
+    const tipoRutinaSelect = document.getElementById('tipoRutinaSelect');
 
     // -------------------------------------------------------------------------
-    // Estado del usuario
+    // Estado del usuario (Pro o Admin cuentan como Pro)
     // -------------------------------------------------------------------------
     const usuario = sessionStore.getUsuario();
-    const isPro   = usuario && usuario.idPaquete === 2;
+    const isPro = usuario && (usuario.idPaquete === 2 || usuario.idRol === 2);
 
-    // Mostrar sección de instructores SOLO para Pro
     if (isPro) {
         pasoInstructor.style.display = 'block';
     }
-    // La configuración siempre es visible (la carga se controla por el flujo de datos)
-    pasoConfiguracion.style.display = 'block';
 
     // -------------------------------------------------------------------------
-    // Mapeos de negocio (frontend)
-    //   MAPA_LIMITACIONES: lesión → grupos musculares a bloquear
-    //   MAPA_EQUIPO_MUSCULO: equipo → grupos musculares compatibles
+    // Mapa de limitaciones: lesión → grupos musculares a bloquear en UI
+    // IDs alineados con la BD desnormalizada:
+    //   1=Muñeca, 2=Hombro, 3=Codo, 4=Rodilla, 5=Lumbar
     // -------------------------------------------------------------------------
     const MAPA_LIMITACIONES = {
         1: [6, 7],      // Muñeca → Bíceps, Tríceps
         2: [1, 2, 4],   // Hombro → Pecho, Espalda, Hombros
         3: [6, 7],      // Codo   → Bíceps, Tríceps
-        4: [3],         // Rodilla → Pierna
-        5: [3, 5]       // Lumbar  → Pierna, Core
+        4: [3],          // Rodilla → Pierna
+        5: [3, 5]        // Lumbar  → Pierna, Core
     };
 
     const MAPA_EQUIPO_MUSCULO = {
@@ -155,25 +146,29 @@ export async function renderGenerarRutinaPanel(container) {
         4: [1, 3, 4, 7]      // Banco/silla → Pecho, Pierna, Hombros, Tríceps
     };
 
-    let catalogosData   = null;  // Cache de catálogos del backend
-    let gruposBloqueados = new Set(); // IDs de grupos bloqueados por limitaciones
+    let catalogosData = null;
+    let gruposBloqueados = new Set();
+    let tipoRutinaUsuario = 'Diaria'; // Se actualiza al cargar el perfil
+
+    pasoConfiguracion.style.display = 'block';
 
     // -------------------------------------------------------------------------
     // Helpers de UI
     // -------------------------------------------------------------------------
 
-    /**
-     * Actualiza el contador de grupos musculares según el tipo de rutina.
-     */
     function actualizarMensajeMusculos() {
-        const maxAllowed = tipoRutinaSelect.value === 'Diaria' ? 1 : 3;
+        const maxAllowed = tipoRutinaUsuario === 'Diaria' ? 1 : 3;
         actualizarContadorMusculos(maxAllowed);
     }
 
-    /**
-     * Reescribe el texto del contador con la instrucción directa.
-     * Formato: "Selecciona X grupos musculares."
-     */
+    tipoRutinaSelect.addEventListener('change', (e) => {
+        tipoRutinaUsuario = e.target.value;
+        // Limpiar selección de músculos al cambiar el tipo de rutina
+        document.querySelectorAll('.muscle-selector__btn--active').forEach(b => b.classList.remove('muscle-selector__btn--active'));
+        evaluarLimitesBotones();
+        actualizarEquipamiento();
+    });
+
     function actualizarContadorMusculos(maxAllowed) {
         const seleccionados = document.querySelectorAll(
             '.muscle-selector__btn--active:not(.obj-selector-btn)').length;
@@ -183,22 +178,16 @@ export async function renderGenerarRutinaPanel(container) {
             : `Límite alcanzado.`;
     }
 
-    /**
-     * Habilita/deshabilita los botones de grupos musculares según el límite actual.
-     * Nunca deshabilita los que ya están bloqueados por limitación física.
-     */
     function evaluarLimitesBotones() {
-        const maxAllowed = tipoRutinaSelect.value === 'Diaria' ? 1 : 3;
+        const maxAllowed = tipoRutinaUsuario === 'Diaria' ? 1 : 3;
         const seleccionados = document.querySelectorAll(
             '.muscle-selector__btn--active:not(.obj-selector-btn)').length;
 
         document.querySelectorAll('.muscle-selector__btn:not(.obj-selector-btn)').forEach(btn => {
             if (gruposBloqueados.has(parseInt(btn.dataset.value))) {
-                // Siempre bloqueado por limitación física
                 btn.disabled = true;
                 return;
             }
-            // Deshabilitar los no seleccionados si ya se alcanzó el límite
             const esActivo = btn.classList.contains('muscle-selector__btn--active');
             btn.disabled = !esActivo && seleccionados >= maxAllowed;
         });
@@ -216,18 +205,22 @@ export async function renderGenerarRutinaPanel(container) {
                 fetch(`${URL_BASE}/perfil/datos`, { credentials: 'include' })
             ]);
 
-            // -- Verificación de perfil y objetivo para usuario Basic --
             if (resPerf.ok) {
                 const jsonPerf = await resPerf.json();
                 if (jsonPerf.ok && jsonPerf.data) {
+                    // Leer las limitaciones múltiples del perfil
                     const limitaciones = jsonPerf.data.limitaciones || [];
 
-                    // Construir set de grupos bloqueados por limitaciones físicas
-                    limitaciones.forEach(limId => {
-                        if (MAPA_LIMITACIONES[limId]) {
-                            MAPA_LIMITACIONES[limId].forEach(gId => gruposBloqueados.add(gId));
+                    // Bloquear grupos musculares según las limitaciones del usuario
+                    limitaciones.forEach(lim => {
+                        const idLim = lim.id || lim.idLimitacion;
+                        if (idLim && MAPA_LIMITACIONES[idLim]) {
+                            MAPA_LIMITACIONES[idLim].forEach(gId => gruposBloqueados.add(gId));
                         }
                     });
+
+                    // Leer tipo de rutina seleccionado por defecto
+                    tipoRutinaUsuario = tipoRutinaSelect.value || 'Diaria';
 
                     // Validación crítica para Basic: debe tener objetivo configurado
                     if (!isPro && (!jsonPerf.data.idObjetivo || jsonPerf.data.idObjetivo === 0)) {
@@ -238,26 +231,23 @@ export async function renderGenerarRutinaPanel(container) {
                                 <a href="#perfil" style="color: var(--azul); text-decoration: underline;">Perfil Físico</a>.
                             </div>`;
                         pasoConfiguracion.style.display = 'none';
-                        return; // Bloquear la interfaz
+                        return;
                     }
                 }
             }
 
-            // -- Renderizar catálogos de músculos y equipamiento --
             if (resCat.ok) {
                 const json = await resCat.json();
                 if (json.ok && json.data) {
                     catalogosData = json.data;
                     renderizarGruposMusculares(catalogosData.gruposMusculares || []);
 
-                    // Instructores Virtuales: SOLO para usuarios Pro
                     if (isPro && catalogosData.objetivos && catalogosData.objetivos.length > 0) {
                         renderizarInstructores(catalogosData.objetivos);
                     }
                 }
             }
 
-            // Inicializar estado visual
             actualizarMensajeMusculos();
 
         } catch (err) {
@@ -266,17 +256,13 @@ export async function renderGenerarRutinaPanel(container) {
         }
     }
 
-    /**
-     * Renderiza los botones de grupos musculares en el grid.
-     * Los grupos bloqueados por limitaciones se muestran pero permanecen deshabilitados.
-     */
     function renderizarGruposMusculares(grupos) {
         gruposContainer.innerHTML = grupos.map(g => {
-            const gId      = parseInt(g.id || g.idGrupoMuscular);
+            const gId = parseInt(g.id || g.idGrupoMuscular);
             const bloqueado = gruposBloqueados.has(gId);
             return `
                 <button
-                    class="muscle-selector__btn${bloqueado ? '' : ''}"
+                    class="muscle-selector__btn"
                     type="button"
                     data-value="${gId}"
                     ${bloqueado ? 'disabled title="Bloqueado por tu limitación física registrada"' : ''}
@@ -287,7 +273,6 @@ export async function renderGenerarRutinaPanel(container) {
             `;
         }).join('');
 
-        // Asignar eventos a los botones habilitados
         document.querySelectorAll('.muscle-selector__btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 if (this.disabled) return;
@@ -300,10 +285,6 @@ export async function renderGenerarRutinaPanel(container) {
         evaluarLimitesBotones();
     }
 
-    /**
-     * Renderiza las tarjetas de Instructores Virtuales (solo para Pro).
-     * Solo uno puede estar seleccionado a la vez (radio-like behavior).
-     */
     function renderizarInstructores(objetivos) {
         instructoresGrid.innerHTML = objetivos.map(obj => `
             <div
@@ -318,7 +299,6 @@ export async function renderGenerarRutinaPanel(container) {
             </div>
         `).join('');
 
-        // Comportamiento radio: un solo instructor activo
         document.querySelectorAll('.instructor-card').forEach(card => {
             const seleccionarCard = () => {
                 const yaSeleccionado = card.classList.contains('selected');
@@ -335,11 +315,7 @@ export async function renderGenerarRutinaPanel(container) {
         });
     }
 
-    /**
-     * Filtra el equipamiento disponible según los músculos seleccionados.
-     * "Sin equipamiento" (ID=1) siempre está disponible.
-     */
-    function actualizarEquipamiento() {
+    async function actualizarEquipamiento() {
         const seleccionados = Array.from(
             document.querySelectorAll('.muscle-selector__btn--active:not(.obj-selector-btn)')
         ).map(btn => parseInt(btn.dataset.value));
@@ -347,49 +323,48 @@ export async function renderGenerarRutinaPanel(container) {
         if (seleccionados.length === 0) {
             equipamientoSelect.disabled = true;
             equipamientoSelect.style.backgroundColor = '#f5f5f5';
-            equipamientoSelect.innerHTML = '<option value=""></option>';
+            equipamientoSelect.innerHTML = '<option value="">— Selecciona músculos primero —</option>';
             return;
         }
 
-        equipamientoSelect.disabled = false;
-        equipamientoSelect.style.backgroundColor = '#fff';
+        equipamientoSelect.disabled = true;
+        equipamientoSelect.style.backgroundColor = '#f5f5f5';
+        equipamientoSelect.innerHTML = '<option value="">Cargando equipamiento...</option>';
 
-        let opcionesFiltradas = '';
-        if (catalogosData && catalogosData.equipamiento) {
-            catalogosData.equipamiento.forEach(eq => {
-                const idEq = eq.id || eq.idEquipamiento;
-                // ID=1 ("Sin equipamiento") siempre aparece
-                const musculosCompatibles = MAPA_EQUIPO_MUSCULO[idEq];
-                const esCompatible = musculosCompatibles === null
-                    || seleccionados.some(gId => musculosCompatibles.includes(gId));
-
-                if (esCompatible) {
-                    opcionesFiltradas += `<option value="${idEq}">${eq.nombre}</option>`;
-                }
+        try {
+            const res = await fetch(`${URL_BASE}/rutinas/equipamiento-disponible`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(seleccionados),
+                credentials: 'include'
             });
-        }
+            const result = await res.json();
 
-        // Fallback: si no hay opciones, mostrar "Sin equipamiento"
-        if (!opcionesFiltradas && catalogosData && catalogosData.equipamiento) {
-            const sinEq = catalogosData.equipamiento.find(e => (e.id || e.idEquipamiento) === 1);
-            if (sinEq) opcionesFiltradas = `<option value="1">${sinEq.nombre}</option>`;
-        }
+            equipamientoSelect.disabled = false;
+            equipamientoSelect.style.backgroundColor = '#fff';
 
-        equipamientoSelect.innerHTML = opcionesFiltradas;
+            if (result.ok && result.data && result.data.length > 0) {
+                let opciones = '';
+                result.data.forEach(eq => {
+                    opciones += `<option value="${eq.id}">${eq.nombre}</option>`;
+                });
+
+                // Asegurar que "Sin equipamiento" (id=1) esté presente si backend no lo envía
+                if (!result.data.find(e => (e.id || e.idEquipamiento) === 1) && catalogosData && catalogosData.equipamiento) {
+                    const sinEq = catalogosData.equipamiento.find(e => (e.id || e.idEquipamiento) === 1);
+                    if (sinEq) opciones += `<option value="1">${sinEq.nombre}</option>`;
+                }
+                equipamientoSelect.innerHTML = opciones;
+            } else {
+                equipamientoSelect.innerHTML = '<option value="1">Sin equipamiento</option>';
+            }
+        } catch (err) {
+            console.error('Error al cargar equipamiento', err);
+            equipamientoSelect.disabled = false;
+            equipamientoSelect.style.backgroundColor = '#fff';
+            equipamientoSelect.innerHTML = '<option value="1">Sin equipamiento</option>';
+        }
     }
-
-    // -------------------------------------------------------------------------
-    // Evento: Cambio en tipo de rutina
-    // -------------------------------------------------------------------------
-    tipoRutinaSelect.addEventListener('change', () => {
-        // Limpiar selecciones de músculos al cambiar tipo
-        document.querySelectorAll('.muscle-selector__btn--active:not(.obj-selector-btn)').forEach(btn => {
-            btn.classList.remove('muscle-selector__btn--active');
-        });
-        actualizarMensajeMusculos();
-        evaluarLimitesBotones();
-        actualizarEquipamiento();
-    });
 
     // -------------------------------------------------------------------------
     // Evento: Click en "GENERAR RUTINA"
@@ -397,45 +372,44 @@ export async function renderGenerarRutinaPanel(container) {
     btnGenerar.addEventListener('click', async () => {
         alertaDiv.innerHTML = '';
 
-        const tipoRutina = tipoRutinaSelect.value;
         const gruposArray = Array.from(
             document.querySelectorAll('.muscle-selector__btn--active:not(.obj-selector-btn)')
         ).map(btn => parseInt(btn.dataset.value));
 
-        const equipoId    = parseInt(equipamientoSelect.value);
-        const equiposArray = isNaN(equipoId) ? [] : [equipoId];
+        const equipoId = parseInt(equipamientoSelect.value);
 
         // -- Validaciones de frontend (pre-vuelo) --
 
-        // Pro: DEBE haber seleccionado un instructor
         if (isPro && !idObjetivoInput.value) {
             alertaDiv.innerHTML = `<span style="color: var(--rojo); font-weight: bold;">⚠ Por favor selecciona un Instructor Virtual antes de generar.</span>`;
             return;
         }
 
-        // Sin músculos seleccionados
         if (gruposArray.length === 0) {
             alertaDiv.innerHTML = `<span style="color: var(--rojo);">Por favor selecciona al menos 1 grupo muscular.</span>`;
             return;
         }
 
-        // Rutina Diaria: exactamente 1 músculo
-        if (tipoRutina === 'Diaria' && gruposArray.length !== 1) {
-            alertaDiv.innerHTML = `<span style="color: var(--rojo);">Una Rutina Diaria requiere exactamente 1 grupo muscular.</span>`;
+        if (tipoRutinaUsuario === 'Diaria' && gruposArray.length !== 1) {
+            alertaDiv.innerHTML = `<span style="color: var(--rojo);">Tu preferencia es Rutina Diaria, que requiere exactamente 1 grupo muscular.</span>`;
             return;
         }
 
-        // Rutina Semanal: máximo 3 músculos (aplica para todos los planes)
-        if (tipoRutina === 'Semanal' && gruposArray.length > 3) {
-            alertaDiv.innerHTML = `<span style="color: var(--rojo);">Máximo 3 grupos musculares para una Rutina Semanal.</span>`;
+        if (tipoRutinaUsuario === 'Semanal' && (gruposArray.length < 2 || gruposArray.length > 3)) {
+            alertaDiv.innerHTML = `<span style="color: var(--rojo);">Una Rutina Semanal requiere entre 2 y 3 grupos musculares.</span>`;
             return;
         }
 
-        // Construir payload para el backend
+        if (isNaN(equipoId) || equipoId <= 0) {
+            alertaDiv.innerHTML = `<span style="color: var(--rojo);">Por favor selecciona un equipamiento.</span>`;
+            return;
+        }
+
+        // Payload simplificado (esquema aplanado)
         const payload = {
-            tipoRutina:       tipoRutina,
             gruposMusculares: gruposArray,
-            equipamiento:     equiposArray
+            idEquipamiento: equipoId,
+            tipoRutina: tipoRutinaUsuario
         };
 
         // Pro: incluir el idObjetivo seleccionado
@@ -449,17 +423,16 @@ export async function renderGenerarRutinaPanel(container) {
 
         try {
             const res = await fetch(`${URL_BASE}/rutinas/solicitud`, {
-                method:      'POST',
-                headers:     { 'Content-Type': 'application/json' },
-                body:        JSON.stringify(payload),
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
                 credentials: 'include'
             });
 
             const result = await res.json();
 
             if (result.ok || res.ok) {
-                // Éxito: navegar al panel de rutina activa
-                alert('¡Rutina generada con éxito! Ahora puedes verla en tu panel.');
+                await modal.info('¡Rutina generada con éxito! Ahora puedes verla en tu panel.');
                 const linkRutinas = document.querySelector('[data-panel="rutina-activa"]');
                 if (linkRutinas) {
                     linkRutinas.click();
@@ -467,7 +440,6 @@ export async function renderGenerarRutinaPanel(container) {
                     window.location.reload();
                 }
             } else {
-                // Error bloqueante del backend (límites, validaciones, etc.)
                 alertaDiv.innerHTML = `
                     <div class="alerta-bloqueo" style="margin-bottom: 0;">
                         ❌ <strong>Error:</strong> ${result.mensaje || 'No se pudo generar la rutina.'}

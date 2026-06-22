@@ -1,3 +1,5 @@
+import { modal } from '../../modules/modal.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const URL_BASE = 'http://localhost:8080/RebootBackend/api';
     const FETCH_CONFIG = { method: 'GET', credentials: 'include' };
@@ -40,12 +42,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+
+
+    // Selección de limitaciones (múltiple)
+    document.querySelectorAll('#contenedor-limitaciones .boton-limitacion').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const isSelected = btn.classList.contains('seleccionado');
+            if (!isSelected) {
+                const seleccionadas = document.querySelectorAll('#contenedor-limitaciones .boton-limitacion.seleccionado');
+                if (seleccionadas.length >= 3) {
+                    await modal.error('Por tu seguridad, solo puedes seleccionar un máximo de 3 limitaciones físicas. Si presentas más condiciones, te sugerimos consultar con un especialista.');
+                    return;
+                }
+            }
+            btn.classList.toggle('seleccionado');
+        });
+    });
+
     // 3. LÓGICA MULTI-PASO (SPA)
     let pasoActual = 1;
     const totalPasos = 4;
     
-    // Objeto base DTO exacto
-    const dtoPerfil = { peso: null, estatura: null, idObjetivo: null, idNivel: null, limitaciones: [] };
+    // Objeto DTO actualizado: idsLimitaciones (array)
+    const dtoPerfil = { peso: null, estatura: null, idObjetivo: null, idNivel: null, idsLimitaciones: [] };
 
     const btnSiguiente = document.getElementById('btn-siguiente');
     const btnAtras = document.getElementById('btn-atras');
@@ -57,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.validarPasoActual(pasoActual, dtoPerfil)) {
             document.getElementById(`paso-${pasoActual}`).style.display = 'none';
             if (isPro && pasoActual === 1) {
-                pasoActual = 3;
+                pasoActual = 3; // Pro salta el paso de Objetivo
             } else {
                 pasoActual++;
             }
@@ -68,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnAtras.addEventListener('click', () => {
         document.getElementById(`paso-${pasoActual}`).style.display = 'none';
         if (isPro && pasoActual === 3) {
-            pasoActual = 1;
+            pasoActual = 1; // Pro regresa directamente al paso 1
         } else {
             pasoActual--;
         }
@@ -77,10 +96,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     formulario.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Recolectar limpiamente el arreglo de enteros desde los checkboxes
-        const checkboxes = document.querySelectorAll('#contenedor-limitaciones input[type="checkbox"]:checked');
-        dtoPerfil.limitaciones = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        // Recoger las limitaciones (múltiples opcionales)
+        const seleccionadas = document.querySelectorAll('#contenedor-limitaciones .boton-limitacion.seleccionado');
+        dtoPerfil.idsLimitaciones = Array.from(seleccionadas).map(btn => parseInt(btn.dataset.id));
+
+        // El tipo de rutina se selecciona al generar la rutina.
 
         try {
             const respuesta = await fetch(`${URL_BASE}/perfil/onboarding`, {
@@ -97,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.removeItem('registroPro');
                 window.location.href = '../dashboard/dashboard.html';
             } else {
-                alert("Error: " + data.mensaje);
+                await modal.error("Error: " + data.mensaje);
             }
         } catch (error) {
             console.error("Error enviando onboarding:", error);

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding</title>
     <link rel="stylesheet" href="onboarding.css">
 </head>
+
 <body>
     <main>
         <section class="info-panel">
@@ -17,7 +19,8 @@
 
         <section class="form-panel">
             <form class="formulario" id="form-onboarding">
-                
+
+                <!-- PASO 1: Datos físicos -->
                 <div class="bloque paso-onboarding" id="paso-1">
                     <h2 class="fomulario__tituloPrincipal">Datos físicos</h2>
                     <div class="grid-inputs">
@@ -38,47 +41,70 @@
                     </div>
                 </div>
 
+                <!-- PASO 2: Objetivo (solo Basic, Pro lo salta) -->
                 <div class="bloque paso-onboarding" id="paso-2" style="display: none;">
                     <h2>Objetivo</h2>
                     <div class="grid-cards" id="contenedor-objetivos">
-                        <button type="button" class="botones boton-seleccion" data-id="1"><h3>Fuerza</h3></button>
-                        <button type="button" class="botones boton-seleccion" data-id="2"><h3>Hipertrofia</h3></button>
-                        <button type="button" class="botones boton-seleccion" data-id="3"><h3>Resistencia</h3></button>
-                        <button type="button" class="botones boton-seleccion" data-id="4"><h3>Movilidad</h3></button>
+                        <button type="button" class="botones boton-seleccion" data-id="1">
+                            <h3>Hipertrofia</h3>
+                        </button>
+                        <button type="button" class="botones boton-seleccion" data-id="2">
+                            <h3>Resistencia</h3>
+                        </button>
+                        <button type="button" class="botones boton-seleccion" data-id="3">
+                            <h3>Fuerza</h3>
+                        </button>
+                        <button type="button" class="botones boton-seleccion" data-id="4">
+                            <h3>Movilidad</h3>
+                        </button>
                     </div>
                     <small class="error-msg" id="error-objetivo"></small>
                 </div>
 
+                <!-- PASO 3: Nivel físico -->
                 <div class="bloque paso-onboarding" id="paso-3" style="display: none;">
                     <h2>Nivel físico</h2>
                     <div class="niveles" id="contenedor-niveles">
-                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="1">Principiante</button>
-                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="2">Intermedio</button>
-                        <button type="button" class="botones botones--nivel boton-seleccion" data-id="3">Avanzado</button>
+                        <button type="button" class="botones botones--nivel boton-seleccion"
+                            data-id="1">Principiante</button>
+                        <button type="button" class="botones botones--nivel boton-seleccion"
+                            data-id="2">Intermedio</button>
+                        <button type="button" class="botones botones--nivel boton-seleccion"
+                            data-id="3">Avanzado</button>
                     </div>
                     <small class="error-msg" id="error-nivel"></small>
                 </div>
 
+                <!-- PASO 4: Limitación física -->
                 <div class="bloque paso-onboarding" id="paso-4" style="display: none;">
-                    <h2>Limitaciones físicas</h2>
-                    <div class="checkbox-grid" id="contenedor-limitaciones">
-                        <label class="checkbox-item"><input type="checkbox" value="1"> Lesión de rodilla</label>
-                        <label class="checkbox-item"><input type="checkbox" value="2"> Lesión de hombro</label>
-                        <label class="checkbox-item"><input type="checkbox" value="3"> Lesión de muñeca</label>
-                        <label class="checkbox-item"><input type="checkbox" value="4"> Lesión de espalda baja</label>
-                        <label class="checkbox-item"><input type="checkbox" value="5"> Lesión de codo</label>
+                    <h2>Limitación física</h2>
+                    <div id="contenedor-limitaciones" class="niveles">
+                        <!-- Botones que se pueden seleccionar múltiples veces -->
+                        <button type="button" class="botones botones--nivel boton-limitacion"
+                            data-id="1">Muñeca</button>
+                        <button type="button" class="botones botones--nivel boton-limitacion"
+                            data-id="2">Hombro</button>
+                        <button type="button" class="botones botones--nivel boton-limitacion" data-id="3">Codo</button>
+                        <button type="button" class="botones botones--nivel boton-limitacion"
+                            data-id="4">Rodilla</button>
+                        <button type="button" class="botones botones--nivel boton-limitacion"
+                            data-id="5">Lumbar</button>
                     </div>
                 </div>
+
+
 
                 <div class="controles-formulario">
                     <button type="button" class="botones" id="btn-atras" style="display: none;">Atrás</button>
                     <button type="button" class="botones" id="btn-siguiente">Siguiente</button>
-                    <button type="submit" class="btn-guardar" id="btn-guardar" style="display: none;">Guardar perfil</button>
+                    <button type="submit" class="btn-guardar" id="btn-guardar" style="display: none;">Guardar
+                        perfil</button>
                 </div>
             </form>
         </section>
     </main>
     <script src="onboardingValidaciones.js"></script>
-    <script src="onboarding.js"></script>
+    <script type="module" src="onboarding.js"></script>
 </body>
+
 </html>

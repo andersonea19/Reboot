@@ -1,14 +1,12 @@
 export async function renderCatalogosPanel(container) {
     const URL_BASE = 'http://localhost:8080/RebootBackend/api/admin/catalogos';
-    
+
     const catalogos = [
-        { id: 'objetivos', label: 'Objetivos', hasDesc: true, extra: 'niveles' },
+        { id: 'objetivos', label: 'Objetivos', hasDesc: true },
         { id: 'limitaciones', label: 'Limitaciones', hasDesc: true },
         { id: 'equipamiento', label: 'Equipamiento', hasDesc: true },
         { id: 'gruposmusculares', label: 'Grupos Musculares', hasDesc: true },
-        { id: 'musculos', label: 'Músculos', hasDesc: true, extra: 'grupoMuscular' },
-        { id: 'niveles', label: 'Niveles', hasDesc: true },
-        { id: 'dificultad', label: 'Dificultades', hasDesc: false }
+        { id: 'niveles', label: 'Niveles', hasDesc: true }
     ];
 
     let catalogoActual = catalogos[0];
@@ -39,7 +37,6 @@ export async function renderCatalogosPanel(container) {
             <div class="panel__header">
                 <h2 class="panel__titulo">Gestión de Catálogos</h2>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <button id="btnNuevoRegistro" class="panel__boton" style="padding: 10px 20px;">+ Nuevo Registro</button>
                     <select id="selectCatalogo" class="panel__input" style="width: 200px; padding: 10px; border-radius: 8px;">
                         ${catalogos.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
                     </select>
@@ -83,9 +80,9 @@ export async function renderCatalogosPanel(container) {
                         <textarea id="inputDescripcion" class="panel__input" rows="3"></textarea>
                     </div>
 
-                    <div id="containerExtra" style="display: none; flex-direction: column; gap: 5px;">
-                        <label id="labelExtra" style="font-family: var(--fuenteTexto); font-weight: bold;">Extra:</label>
-                        <select id="inputExtra" class="panel__input"></select>
+                    <div id="containerInstructor" style="display: none; flex-direction: column; gap: 5px;">
+                        <label style="font-family: var(--fuenteTexto); font-weight: bold;">Instructor:</label>
+                        <input type="text" id="inputInstructor" class="panel__input" placeholder="Nombre del Coach">
                     </div>
 
                     <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: flex-end; padding-top: 20px; border-top: 1px solid var(--gris-claro);">
@@ -99,7 +96,6 @@ export async function renderCatalogosPanel(container) {
 
     const selectCatalogo = document.getElementById('selectCatalogo');
     const filtroCatalogo = document.getElementById('filtroCatalogo');
-    const btnNuevoRegistro = document.getElementById('btnNuevoRegistro');
     const tbodyCatalogos = document.getElementById('tbodyCatalogos');
     const alertaCatalogo = document.getElementById('alerta-catalogo');
 
@@ -111,13 +107,9 @@ export async function renderCatalogosPanel(container) {
     const inputNombre = document.getElementById('inputNombre');
     const containerDescripcion = document.getElementById('containerDescripcion');
     const inputDescripcion = document.getElementById('inputDescripcion');
-    const containerExtra = document.getElementById('containerExtra');
-    const inputExtra = document.getElementById('inputExtra');
-    const labelExtra = document.getElementById('labelExtra');
+    const containerInstructor = document.getElementById('containerInstructor');
+    const inputInstructor = document.getElementById('inputInstructor');
     const modalTitulo = document.getElementById('modalTitulo');
-
-    // Grupos musculares auxiliares (para cuando editamos Músculos)
-    let gruposMuscularesData = [];
 
     const mostrarAlerta = (msg, error = false) => {
         alertaCatalogo.innerHTML = `<div style="padding: 10px; border-radius: 8px; color: #fff; background-color: ${error ? 'var(--rojo)' : 'var(--verde)'};">${msg}</div>`;
@@ -127,26 +119,14 @@ export async function renderCatalogosPanel(container) {
     const cargarDatos = async () => {
         try {
             tbodyCatalogos.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando...</td></tr>';
-            
-            const estaticos = ['objetivos', 'niveles', 'dificultad'];
-            if (estaticos.includes(catalogoActual.id)) {
-                btnNuevoRegistro.style.display = 'none';
-            } else {
-                btnNuevoRegistro.style.display = 'inline-block';
-            }
 
             const res = await fetch(`${URL_BASE}/${catalogoActual.id}`, { credentials: 'include' });
             if (!res.ok) throw new Error('Error al cargar datos');
             const result = await res.json();
-            
+
             if (result.ok) {
                 dataActual = result.data || [];
                 renderTabla();
-                
-                // Si el catálogo actual es grupos musculares, guardamos cache para los músculos
-                if (catalogoActual.id === 'gruposmusculares') {
-                    gruposMuscularesData = dataActual;
-                }
             } else {
                 mostrarAlerta(result.mensaje, true);
             }
@@ -155,18 +135,13 @@ export async function renderCatalogosPanel(container) {
         }
     };
 
-    // Si necesitamos cargar los grupos musculares explícitamente para el combo de "Músculos"
-    const cargarGruposMuscularesParaSelect = async () => {
-        try {
-            const res = await fetch(`${URL_BASE}/gruposmusculares`, { credentials: 'include' });
-            const result = await res.json();
-            if (result.ok) gruposMuscularesData = result.data || [];
-        } catch(e) {}
-    };
-
     const renderTabla = () => {
         const filtro = filtroCatalogo.value.toLowerCase();
-        const filtrados = dataActual.filter(item => item.nombre && item.nombre.toLowerCase().includes(filtro));
+        const filtrados = dataActual.filter(item => {
+            const matchNombre = item.nombre && item.nombre.toLowerCase().includes(filtro);
+            const matchDesc = item.descripcion && item.descripcion.toLowerCase().includes(filtro);
+            return matchNombre || matchDesc;
+        });
 
         if (filtrados.length === 0) {
             tbodyCatalogos.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay registros encontrados.</td></tr>';
@@ -174,17 +149,16 @@ export async function renderCatalogosPanel(container) {
         }
 
         tbodyCatalogos.innerHTML = filtrados.map(item => {
-            const estadoStr = item.activo 
-                ? '<span class="badge-activo">Activo</span>' 
+            const estadoStr = item.activo
+                ? '<span class="badge-activo">Activo</span>'
                 : '<span class="badge-inactivo">Inactivo</span>';
-            
+
             let descStr = item.descripcion || 'N/A';
-            if (catalogoActual.id === 'musculos') {
-                const gm = gruposMuscularesData.find(g => g.id === item.idGrupoMuscular);
-                descStr = gm ? `Grupo: ${gm.nombre}` : `ID Grupo: ${item.idGrupoMuscular}`;
+            if (catalogoActual.id === 'objetivos' && item.instructorNombre) {
+                descStr += ` <br><small>Coach: ${item.instructorNombre}</small>`;
             }
 
-            const estaticosHardDelete = ['objetivos', 'niveles', 'dificultad'];
+            const estaticosHardDelete = ['objetivos', 'niveles'];
             const permiteDelete = !estaticosHardDelete.includes(catalogoActual.id);
 
             return `
@@ -197,8 +171,8 @@ export async function renderCatalogosPanel(container) {
                         <select class="select-accion" data-id="${item.id}" data-activo="${item.activo}">
                             <option value="">Acciones...</option>
                             <option value="editar">Editar</option>
-                            <option value="toggle">${item.activo ? 'Inactivar' : 'Activar'}</option>
-                            ${permiteDelete ? `<option value="eliminarDefinitivo" style="color:var(--rojo);">Borrado definitivo</option>` : ''}
+                            ${catalogoActual.id !== 'niveles' ? `<option value="toggle">${item.activo ? 'Inactivar' : 'Activar'}</option>` : ''}
+
                         </select>
                     </td>
                 </tr>
@@ -211,15 +185,12 @@ export async function renderCatalogosPanel(container) {
                 const val = e.target.value;
                 const idStr = e.target.dataset.id;
                 const activo = e.target.dataset.activo === 'true';
-                
-                if(val === 'toggle') {
+
+                if (val === 'toggle') {
                     toggleEstado(idStr, activo);
-                } else if(val === 'editar') {
+                } else if (val === 'editar') {
                     abrirModal(idStr);
-                } else if(val === 'eliminarDefinitivo') {
-                    if(confirm('¿Estás seguro de eliminar físicamente este registro de la base de datos? Esto no se puede deshacer.')){
-                        eliminarDefinitivo(idStr);
-                    }
+
                 }
                 e.target.value = '';
             });
@@ -230,28 +201,17 @@ export async function renderCatalogosPanel(container) {
         formCatalogo.reset();
         inputId.value = '';
         containerDescripcion.style.display = catalogoActual.hasDesc ? 'flex' : 'none';
-        containerExtra.style.display = 'none';
+        containerInstructor.style.display = catalogoActual.id === 'objetivos' ? 'flex' : 'none';
         inputDescripcion.required = catalogoActual.hasDesc;
-
-        if (catalogoActual.id === 'musculos') {
-            containerExtra.style.display = 'flex';
-            labelExtra.innerText = 'Grupo Muscular:';
-            inputExtra.required = true;
-            if (gruposMuscularesData.length === 0) await cargarGruposMuscularesParaSelect();
-            inputExtra.innerHTML = '<option value="">Seleccione un Grupo Muscular...</option>' + 
-                                   gruposMuscularesData.map(g => `<option value="${g.id}">${g.nombre}</option>`).join('');
-        } else {
-            inputExtra.required = false;
-        }
 
         if (id) {
             modalTitulo.innerText = `Editar ${catalogoActual.label}`;
-            const item = dataActual.find(x => x.id === id);
+            const item = dataActual.find(x => x.id == id);
             if (item) {
                 inputId.value = item.id;
                 inputNombre.value = item.nombre;
                 if (catalogoActual.hasDesc) inputDescripcion.value = item.descripcion || '';
-                if (catalogoActual.id === 'musculos') inputExtra.value = item.idGrupoMuscular;
+                if (catalogoActual.id === 'objetivos') inputInstructor.value = item.instructorNombre || '';
             }
         } else {
             modalTitulo.innerText = `Nuevo Registro en ${catalogoActual.label}`;
@@ -265,7 +225,7 @@ export async function renderCatalogosPanel(container) {
 
     formCatalogo.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const payload = {
             nombre: inputNombre.value.trim()
         };
@@ -274,13 +234,11 @@ export async function renderCatalogosPanel(container) {
             payload.descripcion = inputDescripcion.value.trim();
         }
 
-        if (catalogoActual.id === 'musculos') {
-            payload.idGrupoMuscular = parseInt(inputExtra.value);
-        }
-
         if (catalogoActual.id === 'objetivos') {
-            // Un objetivo por defecto requiere niveles. En un sistema unificado sin la UI compleja de niveles, enviamos uno basico.
-            payload.niveles = [{ idNivel: 1, series: 3, repeticiones: 10, descansoSeg: 60 }];
+            payload.instructorNombre = inputInstructor.value.trim() || null;
+            // Un objetivo no requiere el array de niveles ahora ya que se aplanó en las consultas, 
+            // aunque el backend todavía ignora si no mandamos `niveles` por que quitamos el array.
+            // Wait, el backend sigue intentando insertar en `objetivoNivel`? No, acabo de eliminar eso de CatalogoAdminServlet!
         }
 
         const method = inputId.value ? 'PUT' : 'POST';
@@ -301,7 +259,7 @@ export async function renderCatalogosPanel(container) {
             } else {
                 mostrarAlerta(result.mensaje || 'Error al guardar', true);
             }
-        } catch(err) {
+        } catch (err) {
             mostrarAlerta('Fallo de red', true);
         }
     });
@@ -320,34 +278,12 @@ export async function renderCatalogosPanel(container) {
             } else {
                 mostrarAlerta(result.mensaje || 'Error al actualizar', true);
             }
-        } catch(err) {
+        } catch (err) {
             mostrarAlerta('Fallo de red', true);
         }
     };
 
-    const eliminarDefinitivo = async (id) => {
-        try {
-            const res = await fetch(`${URL_BASE}/${catalogoActual.id}/${id}?estado=hard_delete`, {
-                method: 'DELETE',
-                credentials: 'include'
-            });
-            const result = await res.json();
-            if (result.ok) {
-                mostrarAlerta('Registro eliminado definitivamente');
-                cargarDatos();
-            } else {
-                if (result.data && result.data.code === 'DEPENDENCY_EXISTS') {
-                    if (confirm(result.mensaje + '\n\n¿Deseas inactivarlo en su lugar para que deje de aparecer sin afectar otras rutinas?')) {
-                        toggleEstado(id, true); // True asume que actualmente está activo y lo pasará a inactivo
-                    }
-                } else {
-                    mostrarAlerta(result.mensaje || 'Hubo un error al eliminar el registro.', true);
-                }
-            }
-        } catch(err) {
-            mostrarAlerta('Fallo de red al eliminar', true);
-        }
-    };
+
 
     selectCatalogo.addEventListener('change', (e) => {
         catalogoActual = catalogos.find(c => c.id === e.target.value);
@@ -356,9 +292,7 @@ export async function renderCatalogosPanel(container) {
     });
 
     filtroCatalogo.addEventListener('input', renderTabla);
-    btnNuevoRegistro.addEventListener('click', () => abrirModal());
 
     // Inicializar
-    if (gruposMuscularesData.length === 0) cargarGruposMuscularesParaSelect();
     cargarDatos();
 }

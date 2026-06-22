@@ -1,3 +1,5 @@
+import { modal } from '../../modules/modal.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('plan') === 'pro') {
@@ -36,9 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Validación de Contraseña (mínimo 6 caracteres)
-        if (contrasena.length < 6) {
-            msgError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+        // Validación de Contraseña (mínimo 8 caracteres)
+        if (contrasena.length < 8) {
+            msgError.textContent = 'La contraseña debe tener al menos 8 caracteres.';
             return;
         }
         if (contrasena !== confirmarContrasena) {
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             idPaquete: isPro ? 2 : 1
         };
 
-        console.log("JSON que se está enviando al backend:", JSON.stringify(dtoRegistro));
+
 
         // 4. Iniciar el Fetch dentro del try-catch
         try {
@@ -94,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Evaluamos la bandera booleana "ok" de tu clase JsonResponse.java
             if (data.ok) {
-                alert('Registro exitoso. Ahora inicia sesión.');
+                await modal.info('Tu cuenta ha sido registrada exitosamente. Ahora puedes iniciar sesión.', 'Registro Exitoso');
                 window.location.href = 'login.html';
             } else {
                 // El backend respondió correctamente pero con un mensaje de error (ej. "El email ya existe")

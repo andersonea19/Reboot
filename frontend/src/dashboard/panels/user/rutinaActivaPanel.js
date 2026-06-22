@@ -1,4 +1,5 @@
 import { sessionStore } from '../../../store/sessionStore.js';
+import { modal } from '../../../modules/modal.js';
 
 /**
  * Panel de Rutina Activa — Lógica Freemium
@@ -165,8 +166,8 @@ export async function renderRutinaActivaPanel(container) {
     const renderTabs = () => {
         const tabsContainer = document.getElementById('tabsContainer');
 
-        if (rutinasActivas.length <= 1) {
-            // Basic o Pro con solo 1 rutina: sin tabs
+        if (!isPro || rutinasActivas.length === 0) {
+            // Basic no tiene tabs. Pro las tiene siempre aunque sea 1 rutina.
             tabsContainer.style.display = 'none';
             return;
         }
@@ -321,11 +322,17 @@ export async function renderRutinaActivaPanel(container) {
                     ? `<span style="background: #4caf50; color: white; border-radius: 12px; padding: 2px 10px; font-size: 0.72rem; margin-left: 8px;">✔ COMPLETADO</span>`
                     : `<span style="color: var(--gris-oscuro); font-size: 0.8rem; margin-left: 8px;">(${completadosCount}/${ejerciciosDia.length})</span>`;
 
+                let grupoDelDia = '';
+                if (ejerciciosDia.length > 0 && ejerciciosDia[0].categorias) {
+                    grupoDelDia = ejerciciosDia[0].categorias;
+                }
+                const grupoHtml = grupoDelDia ? ` - <span style="color: var(--azul); font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">${grupoDelDia}</span>` : '';
+
                 return `
                     <div class="accordion-item">
                         <div class="accordion-header" data-target="dia-${dIdx}">
                             <span>
-                                Día ${dia.numDia}
+                                Día ${dia.numDia}${grupoHtml}
                                 ${headerBadge}
                             </span>
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -428,13 +435,13 @@ export async function renderRutinaActivaPanel(container) {
                         // Recargar para reflejar el nuevo estado (progreso, badges, botones)
                         await cargarRutinaActiva(targetId);
                     } else {
-                        alert(result.mensaje || 'No se pudo completar el ejercicio.');
+                        await modal.error(result.mensaje || 'No se pudo completar el ejercicio.');
                         btn.disabled  = false;
                         btn.textContent = 'Completar Ejercicio';
                     }
                 } catch (err) {
                     console.error('Error al completar ejercicio:', err);
-                    alert('Error de red. Inténtalo de nuevo.');
+                    await modal.error('Error de red. Inténtalo de nuevo.');
                     btn.disabled  = false;
                     btn.textContent = 'Completar Ejercicio';
                 }
@@ -454,29 +461,26 @@ export async function renderRutinaActivaPanel(container) {
 
                 if (result.ok || res.ok) {
                     const mensaje = accion === 'completar'
-                        ? '🎉 ¡Rutina completada! Puedes verla en tu historial.'
-                        : '🗑 Rutina abandonada. Puedes crear una nueva rutina.';
-                    alert(mensaje);
+                        ? 'Rutina completada. Puedes verla en tu historial.'
+                        : 'Rutina abandonada. Puedes crear una nueva rutina.';
+                    await modal.info(mensaje);
                     await cargarRutinaActiva(); // Refrescar panel (la rutina ya no estará activa)
                 } else {
-                    alert(result.mensaje || `Error al ${accion === 'completar' ? 'completar' : 'abandonar'} la rutina.`);
+                    await modal.error(result.mensaje || `Error al ${accion === 'completar' ? 'completar' : 'abandonar'} la rutina.`);
                 }
             } catch (err) {
                 console.error(`Error al ${accion} rutina:`, err);
-                alert('Error de red. Inténtalo de nuevo.');
+                await modal.error('Error de red. Inténtalo de nuevo.');
             }
         };
 
         document.getElementById('btnCompletarRutina').onclick = () => {
-            if (confirm('¿Confirmas que deseas marcar esta rutina como Completada?\n\nAsegúrate de haber terminado todos los ejercicios.')) {
-                cambiarEstadoRutina(rutina.id, 'completar');
-            }
+            cambiarEstadoRutina(rutina.id, 'completar');
         };
 
-        document.getElementById('btnAbandonarRutina').onclick = () => {
-            if (confirm('¿Seguro que deseas abandonar esta rutina? Esta acción no se puede deshacer.')) {
-                cambiarEstadoRutina(rutina.id, 'cancelar');
-            }
+        document.getElementById('btnAbandonarRutina').onclick = async () => {
+            const ok = await modal.confirmar('¿Seguro que deseas abandonar esta rutina? Esta acción no se puede deshacer.');
+            if (ok) cambiarEstadoRutina(rutina.id, 'cancelar');
         };
     };
 

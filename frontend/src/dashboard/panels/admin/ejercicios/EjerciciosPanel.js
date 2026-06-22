@@ -1,15 +1,14 @@
 export async function renderEjerciciosPanel(container) {
     const URL_BASE = 'http://localhost:8080/RebootBackend/api/ejercicios';
     const URL_CATALOGOS = 'http://localhost:8080/RebootBackend/api/admin/catalogos';
-    
+
     let ejercicios = [];
     let catalogos = {
-        dificultad: [],
-        equipamiento: [],
+        dificultades: [],
+        equipamientos: [],
         limitaciones: [],
-        musculos: [],
         gruposMusculares: [],
-        objetivos: []
+        objetivos: [] // Si es necesario, aunque en el nuevo schema no se asocia al ejercicio
     };
 
     container.innerHTML = `
@@ -31,19 +30,19 @@ export async function renderEjerciciosPanel(container) {
             .table-responsive { width: 100%; overflow-x: auto; }
             .btn-cancelar { background-color: var(--blanco); color: var(--rojo); font-family: var(--fuenteBotones); border: 2px solid var(--rojo); border-radius: 8px; padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
             .btn-guardar { background-color: var(--azul); color: var(--blanco); font-family: var(--fuenteBotones); border: 2px solid var(--azul); border-radius: 8px; padding: 0.6rem 1.2rem; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
-            .check-container { font-family: var(--fuenteTexto); font-size: 0.85rem; background: var(--blanco); padding: 15px; border-radius: 8px; border: 1px solid var(--gris-claro); display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         </style>
         <div class="panel" id="vistaEjercicios">
             <div class="panel__header">
                 <h2 class="panel__titulo">Gestión de Ejercicios</h2>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <select id="selectFiltroEstado" class="panel__input" style="width: 150px; padding: 10px; border-radius: 8px;">
-                        <option value="">Todos (Estado)</option>
+                        <option value="">Todos</option>
                         <option value="activo">Activos</option>
                         <option value="inactivo">Inactivos</option>
                     </select>
                     <select id="selectFiltroGrupo" class="panel__input" style="width: 200px; padding: 10px; border-radius: 8px;">
-                        <option value="">Todos los Músculos</option>
+                        <option value="">Todos los Grupos</option>
                     </select>
                     <input type="text" id="filtroEjercicios" placeholder="Buscar por nombre..." class="panel__input" style="width: 250px; padding: 10px; border-radius: 8px;">
                     <button id="btnNuevoEjercicio" class="panel__boton" style="padding: 10px 20px; margin-left: 20px;">+ Nuevo Ejercicio</button>
@@ -57,13 +56,14 @@ export async function renderEjerciciosPanel(container) {
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
+                                <th>Descripción</th>
                                 <th>Dificultad</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyEjercicios">
-                            <tr><td colspan="5" style="text-align:center; padding: 20px;">Cargando ejercicios...</td></tr>
+                            <tr><td colspan="6" style="text-align:center; padding: 20px;">Cargando ejercicios...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -71,55 +71,47 @@ export async function renderEjerciciosPanel(container) {
         </div>
 
         <!-- Modal de Ejercicio -->
-        <div id="modalEjercicio" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: flex-start; overflow-y: auto; padding: 40px 0;">
-            <div class="modal-content" style="background: var(--blanco); padding: 40px; border-radius: 16px; width: 90%; max-width: 800px; position: relative; margin: auto; border: 1px solid var(--gris-claro);">
+        <div id="modalEjercicio" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+            <div class="modal-content" style="background: var(--blanco); padding: 25px; border-radius: 16px; width: 90%; max-width: 800px; position: relative; margin: auto; border: 1px solid var(--gris-claro); max-height: 90vh; overflow-y: auto;">
                 <span id="cerrarModal" style="position: absolute; right: 25px; top: 20px; font-size: 28px; cursor: pointer; color: var(--gris-oscuro);">&times;</span>
-                <h3 id="modalTitulo" style="color: var(--azul); font-family: var(--fuenteTitulos); margin-bottom: 25px; font-size: 1.8rem; font-weight: 800;">Nuevo Ejercicio</h3>
-                <form id="formEjercicio" style="display: flex; flex-direction: column; gap: 15px;">
+                <h3 id="modalTitulo" style="color: var(--azul); font-family: var(--fuenteTitulos); margin-bottom: 15px; font-size: 1.6rem; font-weight: 800;">Nuevo Ejercicio</h3>
+                <form id="formEjercicio" style="display: flex; flex-direction: column; gap: 12px; font-family: var(--fuenteTexto);">
                     <input type="hidden" id="inputId">
                     
-                    <label style="font-weight: bold;">Nombre:</label>
+                    <label style="font-weight: bold; font-family: var(--fuenteTexto);">Nombre:</label>
                     <input type="text" id="inputNombre" class="panel__input" required>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
-                            <label style="font-weight: bold;">Dificultad:</label>
+                    <div class="form-grid">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold; font-family: var(--fuenteTexto);">Dificultad:</label>
                             <select id="inputDificultad" class="panel__input" required></select>
                         </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold; font-family: var(--fuenteTexto);">Grupo Muscular:</label>
+                            <select id="inputGrupoMuscular" class="panel__input" required></select>
+                        </div>
                     </div>
 
-                    <label style="font-weight: bold;">Descripción:</label>
-                    <textarea id="inputDescripcion" class="panel__input" rows="2"></textarea>
+                    <div class="form-grid">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold; font-family: var(--fuenteTexto);">Equipamiento:</label>
+                            <select id="inputEquipamiento" class="panel__input" required></select>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold; font-family: var(--fuenteTexto);">Limitación Incompatible:</label>
+                            <select id="inputLimitacion" class="panel__input">
+                                <option value="">Ninguna</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <label style="font-weight: bold;">Instrucciones:</label>
+                    <label style="font-weight: bold; font-family: var(--fuenteTexto);">Descripción Corta:</label>
+                    <input type="text" id="inputDescripcion" class="panel__input" required>
+
+                    <label style="font-weight: bold; font-family: var(--fuenteTexto);">Instrucciones:</label>
                     <textarea id="inputInstrucciones" class="panel__input" rows="2"></textarea>
 
-                    <div style="font-family: var(--fuenteTexto); font-weight: bold; margin-top: 10px; border-bottom: 1px solid var(--gris-claro); padding-bottom: 5px;">Relaciones</div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <div>
-                                <label style="font-family: var(--fuenteTexto); font-size: 0.95rem; font-weight: bold; margin-bottom: 5px; display: block;">Grupos Musculares:</label>
-                                <div id="checkGrupos" class="check-container"></div>
-                            </div>
-                            <div>
-                                <label style="font-family: var(--fuenteTexto); font-size: 0.95rem; font-weight: bold; margin-bottom: 5px; display: block;">Objetivos:</label>
-                                <div id="checkObjetivos" class="check-container"></div>
-                            </div>
-                            <div>
-                                <label style="font-family: var(--fuenteTexto); font-size: 0.95rem; font-weight: bold; margin-bottom: 5px; display: block;">Equipamiento:</label>
-                                <div id="checkEquip" class="check-container"></div>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <div style="height: 100%;">
-                                <label style="font-family: var(--fuenteTexto); font-size: 0.95rem; font-weight: bold; margin-bottom: 5px; display: block;">Músculos:</label>
-                                <div id="checkMusculos" class="check-container" style="height: calc(100% - 25px); align-content: flex-start;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: flex-end; padding-top: 20px; border-top: 1px solid var(--gris-claro);">
+                    <div style="display: flex; gap: 15px; margin-top: 20px; justify-content: flex-end; padding-top: 15px; border-top: 1px solid var(--gris-claro);">
                         <button type="button" class="btn-cancelar" id="btnCancelarEjercicio">Cancelar</button>
                         <button type="submit" class="btn-guardar">Guardar Ejercicio</button>
                     </div>
@@ -142,39 +134,43 @@ export async function renderEjerciciosPanel(container) {
     };
 
     /**
-     * Trae todos los catálogos auxiliares (dificultad, músculos, equipos, etc.)
-     * desde el backend para poder llenar los combos de opciones y los checkboxes.
+     * Trae todos los catálogos auxiliares
      */
     const cargarCatalogos = async () => {
         try {
-            const endpoints = ['dificultad', 'equipamiento', 'limitaciones', 'musculos', 'gruposmusculares', 'objetivos'];
-            await Promise.all(endpoints.map(async (ep) => {
-                const r = await fetch(`${URL_CATALOGOS}/${ep}`, { credentials: 'include' });
-                if (r.ok) {
-                    const data = await r.json();
-                    if(data.ok) catalogos[ep === 'gruposmusculares' ? 'gruposMusculares' : ep] = data.data;
-                }
-            }));
-            
-            // Llenar select de dificultad
-            document.getElementById('inputDificultad').innerHTML = '<option value="">Seleccione...</option>' + 
-                catalogos.dificultad.map(d => `<option value="${d.id}">${d.nombre}</option>`).join('');
-                
-            // Llenar select de grupos musculares para filtro
-            selectFiltroGrupo.innerHTML = '<option value="">Todos los Músculos</option>' + 
-                catalogos.gruposMusculares.map(g => `<option value="${g.id}">${g.nombre}</option>`).join('');
-                
-            // Llenar checkboxes
-            const llenarCheckboxes = (idContenedor, data, nameAttr) => {
-                document.getElementById(idContenedor).innerHTML = data.map(item => 
-                    `<label style="display:block; margin-bottom:3px;"><input type="checkbox" name="${nameAttr}" value="${item.id}"> ${item.nombre}</label>`
-                ).join('');
+            // Fetch múltiple paralelo
+            const reqs = [
+                fetch(`${URL_CATALOGOS}/gruposmusculares`, { credentials: 'include' }),
+                fetch(`${URL_CATALOGOS}/equipamiento`, { credentials: 'include' }),
+                fetch(`${URL_CATALOGOS}/limitaciones`, { credentials: 'include' })
+            ];
+            const [resGM, resEq, resLim] = await Promise.all(reqs);
+            if (resGM.ok) catalogos.gruposMusculares = (await resGM.json()).data;
+            if (resEq.ok) catalogos.equipamientos = (await resEq.json()).data;
+            if (resLim.ok) catalogos.limitaciones = (await resLim.json()).data;
+
+            // Llenar select de dificultad (ahora strings estáticos en BD)
+            document.getElementById('inputDificultad').innerHTML = `
+                <option value="">Seleccione...</option>
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+            `;
+
+            // Llenar selects
+            const llenarSelect = (id, cat, placeholder = 'Seleccione...') => {
+                document.getElementById(id).innerHTML = `<option value="">${placeholder}</option>` +
+                    (cat || []).map(item => `<option value="${item.id}">${item.nombre}</option>`).join('');
             };
-            
-            llenarCheckboxes('checkGrupos', catalogos.gruposMusculares, 'cbGrupo');
-            llenarCheckboxes('checkEquip', catalogos.equipamiento, 'cbEquip');
-            llenarCheckboxes('checkObjetivos', catalogos.objetivos, 'cbObj');
-            llenarCheckboxes('checkMusculos', catalogos.musculos, 'cbMusc');
+
+            llenarSelect('inputGrupoMuscular', catalogos.gruposMusculares);
+            llenarSelect('inputEquipamiento', catalogos.equipamientos);
+
+            document.getElementById('inputLimitacion').innerHTML = '<option value="">Ninguna</option>' +
+                (catalogos.limitaciones || []).map(item => `<option value="${item.id}">${item.nombre}</option>`).join('');
+
+            selectFiltroGrupo.innerHTML = '<option value="">Todos los Grupos</option>' +
+                (catalogos.gruposMusculares || []).map(g => `<option value="${g.id}">${g.nombre}</option>`).join('');
 
         } catch (error) {
             console.error("Error al cargar catálogos:", error);
@@ -182,8 +178,7 @@ export async function renderEjerciciosPanel(container) {
     };
 
     /**
-     * Consulta la lista completa de ejercicios guardados en la base de datos
-     * y se la pasa a la función encargada de dibujar la tabla.
+     * Consulta la lista completa de ejercicios guardados
      */
     const cargarEjercicios = async () => {
         try {
@@ -203,48 +198,36 @@ export async function renderEjerciciosPanel(container) {
 
     /**
      * Dibuja la tabla de ejercicios filtrando los datos en tiempo real
-     * basándose en lo que el usuario haya escrito en el buscador y
-     * seleccionado en los filtros (estado y grupo muscular).
      */
     const renderTabla = () => {
         const txt = filtroEjercicios.value.toLowerCase();
         const est = selectFiltroEstado.value;
         const idGrupo = selectFiltroGrupo.value;
-        const nombreGrupoSel = idGrupo ? selectFiltroGrupo.options[selectFiltroGrupo.selectedIndex].text : '';
 
         const filtrados = ejercicios.filter(ej => {
-            const matchTxt = ej.nombre.toLowerCase().includes(txt) || (ej.descripcion || '').toLowerCase().includes(txt);
+            const matchTxt = ej.nombre.toLowerCase().includes(txt) || (ej.instrucciones || '').toLowerCase().includes(txt) || (ej.descripcion || '').toLowerCase().includes(txt);
             const matchEst = est === '' || (est === 'activo' && ej.activo) || (est === 'inactivo' && !ej.activo);
-            
-            let matchGrupo = true;
-            if (idGrupo !== '') {
-                if (ej.categorias) {
-                    matchGrupo = ej.categorias.includes(nombreGrupoSel);
-                } else {
-                    matchGrupo = false;
-                }
-            }
-            
+            const matchGrupo = idGrupo === '' || ej.idGrupoMuscular == idGrupo;
+
             return matchTxt && matchEst && matchGrupo;
         });
 
         if (filtrados.length === 0) {
-            tbodyEjercicios.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay ejercicios que coincidan.</td></tr>';
+            tbodyEjercicios.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No hay ejercicios que coincidan.</td></tr>';
             return;
         }
 
         tbodyEjercicios.innerHTML = filtrados.map(ej => {
-            const dif = catalogos.dificultad.find(d => d.id === ej.idDificultad);
-            const nombreDif = dif ? dif.nombre : 'N/A';
-            const estadoStr = ej.activo 
-                ? '<span class="badge-activo">Activo</span>' 
+            const estadoStr = ej.activo
+                ? '<span class="badge-activo">Activo</span>'
                 : '<span class="badge-inactivo">Inactivo</span>';
-            
+
             return `
                 <tr>
                     <td>${ej.id}</td>
                     <td style="font-weight: bold;">${ej.nombre}</td>
-                    <td style="color: var(--gris-oscuro);">${nombreDif}</td>
+                    <td style="color: var(--gris-oscuro); font-size: 0.9em; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ej.descripcion || ''}">${ej.descripcion || 'Sin descripción'}</td>
+                    <td style="color: var(--gris-oscuro);">${ej.dificultad}</td>
                     <td>${estadoStr}</td>
                     <td>
                         <select class="select-accion" data-id="${ej.id}" data-activo="${ej.activo}">
@@ -261,9 +244,9 @@ export async function renderEjerciciosPanel(container) {
             select.addEventListener('change', (e) => {
                 const val = e.target.value;
                 const id = parseInt(e.target.dataset.id);
-                if(val === 'toggle') {
+                if (val === 'toggle') {
                     inactivarEjercicio(id);
-                } else if(val === 'editar') {
+                } else if (val === 'editar') {
                     abrirModal(id);
                 }
                 e.target.value = '';
@@ -273,51 +256,27 @@ export async function renderEjerciciosPanel(container) {
 
     /**
      * Abre la ventana flotante (modal) para crear o editar un ejercicio.
-     * Si le pasamos un "id", buscará los datos de ese ejercicio en la DB
-     * para rellenar los campos y checkboxes automáticamente.
-     * @param {number|null} id - ID del ejercicio a editar, o null si es nuevo.
      */
     const abrirModal = async (id = null) => {
         formEjercicio.reset();
         document.getElementById('inputId').value = '';
         document.getElementById('modalTitulo').innerText = 'Nuevo Ejercicio';
 
-        // Limpiar checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-
         if (id) {
-            const ejBasico = ejercicios.find(x => x.id === id);
-            if (ejBasico) {
-                document.getElementById('modalTitulo').innerText = 'Editar Ejercicio';
-                document.getElementById('inputId').value = ejBasico.id;
-                document.getElementById('inputNombre').value = ejBasico.nombre;
-                document.getElementById('inputDificultad').value = ejBasico.idDificultad;
-                document.getElementById('inputDescripcion').value = ejBasico.descripcion || '';
-                document.getElementById('inputInstrucciones').value = ejBasico.instrucciones || '';
-            }
-
+            document.getElementById('modalTitulo').innerText = 'Editar Ejercicio';
             try {
                 const res = await fetch(`${URL_BASE}/${id}`, { credentials: 'include' });
                 const result = await res.json();
                 if (result.ok && result.data) {
                     const ej = result.data;
-                    
-                    if(ej.gruposMusculares) ej.gruposMusculares.forEach(gId => {
-                        const cb = document.querySelector(`input[name="cbGrupo"][value="${gId}"]`);
-                        if(cb) cb.checked = true;
-                    });
-                    if(ej.equipamientos) ej.equipamientos.forEach(eId => {
-                        const cb = document.querySelector(`input[name="cbEquip"][value="${eId}"]`);
-                        if(cb) cb.checked = true;
-                    });
-                    if(ej.objetivos) ej.objetivos.forEach(oId => {
-                        const cb = document.querySelector(`input[name="cbObj"][value="${oId}"]`);
-                        if(cb) cb.checked = true;
-                    });
-                    if(ej.musculos) ej.musculos.forEach(m => {
-                        const cb = document.querySelector(`input[name="cbMusc"][value="${m.idMusculo}"]`);
-                        if(cb) cb.checked = true;
-                    });
+                    document.getElementById('inputId').value = ej.id;
+                    document.getElementById('inputNombre').value = ej.nombre;
+                    document.getElementById('inputDificultad').value = ej.dificultad;
+                    document.getElementById('inputGrupoMuscular').value = ej.idGrupoMuscular;
+                    document.getElementById('inputEquipamiento').value = ej.idEquipamiento;
+                    document.getElementById('inputLimitacion').value = (ej.idsLimitaciones && ej.idsLimitaciones.length > 0) ? ej.idsLimitaciones[0] : '';
+                    document.getElementById('inputDescripcion').value = ej.descripcion || '';
+                    document.getElementById('inputInstrucciones').value = ej.instrucciones || '';
                 }
             } catch (error) {
                 console.error("Error cargando detalles del ejercicio:", error);
@@ -330,29 +289,22 @@ export async function renderEjerciciosPanel(container) {
     document.getElementById('btnCancelarEjercicio').addEventListener('click', () => modalEjercicio.style.display = 'none');
 
     // -------------------------------------------------------------------------
-    // Evento de guardado: Cuando el administrador le da a "Guardar Ejercicio"
+    // Evento de guardado
     // -------------------------------------------------------------------------
     formEjercicio.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Recolectar checkboxes
-        const getCheckedValues = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(cb => parseInt(cb.value));
+
+        const limitacionVal = document.getElementById('inputLimitacion').value;
 
         const payload = {
             nombre: document.getElementById('inputNombre').value.trim(),
-            idDificultad: parseInt(document.getElementById('inputDificultad').value),
+            dificultad: document.getElementById('inputDificultad').value,
+            idGrupoMuscular: parseInt(document.getElementById('inputGrupoMuscular').value),
+            idEquipamiento: parseInt(document.getElementById('inputEquipamiento').value),
+            idsLimitaciones: limitacionVal ? [parseInt(limitacionVal)] : [],
             descripcion: document.getElementById('inputDescripcion').value.trim(),
-            instrucciones: document.getElementById('inputInstrucciones').value.trim(),
-            gruposMusculares: getCheckedValues('cbGrupo'),
-            equipamientos: getCheckedValues('cbEquip'),
-            objetivos: getCheckedValues('cbObj'),
-            musculos: getCheckedValues('cbMusc').map(id => ({ idMusculo: id })) // El DTO requiere formato [{idMusculo: 1}]
+            instrucciones: document.getElementById('inputInstrucciones').value.trim()
         };
-
-        if (payload.gruposMusculares.length === 0 || payload.equipamientos.length === 0 || payload.objetivos.length === 0 || payload.musculos.length === 0) {
-            mostrarAlerta('Debes seleccionar al menos una opción en cada grupo de relaciones.', true);
-            return;
-        }
 
         const id = document.getElementById('inputId').value;
         const method = id ? 'PUT' : 'POST';
@@ -373,15 +325,11 @@ export async function renderEjerciciosPanel(container) {
             } else {
                 mostrarAlerta(result.mensaje || 'Error al guardar', true);
             }
-        } catch(err) {
+        } catch (err) {
             mostrarAlerta('Fallo de red', true);
         }
     });
 
-    /**
-     * En lugar de borrar físicamente el ejercicio, lo marcamos como inactivo.
-     * Así no rompemos historiales de usuarios que lo hayan realizado.
-     */
     const inactivarEjercicio = async (id) => {
         if (!confirm('¿Seguro que deseas inactivar este ejercicio?')) return;
         try {
@@ -393,7 +341,7 @@ export async function renderEjerciciosPanel(container) {
             } else {
                 mostrarAlerta(result.mensaje || 'Error al inactivar', true);
             }
-        } catch(err) {
+        } catch (err) {
             mostrarAlerta('Fallo de red', true);
         }
     };
