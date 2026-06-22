@@ -44,11 +44,70 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ============================================================
     dashboardRouter.registrarPanel('perfil', renderPerfilPanel);
     dashboardRouter.registrarPanel('configuracion', renderConfiguracionPanel);
+    
+    // Importación y registro dinámico para evitar bloqueos si los archivos están en blanco (0 bytes)
+    try {
+        const module = await import('../../dashboard/panels/admin/monitoreo/MonitoreoPanel.js');
+        dashboardRouter.registrarPanel('monitoreo', module.renderMonitoreoPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar MonitoreoPanel.js:", e);
+    }
+    
+    try {
+        const module = await import('../../dashboard/panels/admin/catalogos/index.js');
+        dashboardRouter.registrarPanel('catalogos', module.renderCatalogosPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar CatalogosPanel.js:", e);
+    }
+    
+    try {
+        const module = await import('../../dashboard/panels/admin/ejercicios/index.js');
+        dashboardRouter.registrarPanel('ejercicios', module.renderEjerciciosPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar EjerciciosPanel.js:", e);
+    }
+    
+    try {
+        const module = await import('../../dashboard/panels/admin/usuarios/index.js');
+        dashboardRouter.registrarPanel('usuarios', module.renderUsuariosPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar UsuariosPanel.js:", e);
+    }
+
+
+    // Módulos de Usuario
+    try {
+        const moduleUser = await import('../../dashboard/panels/user/generarRutinaPanel.js');
+        dashboardRouter.registrarPanel('generar-rutina', moduleUser.renderGenerarRutinaPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar generarRutinaPanel.js:", e);
+    }
+    
+    try {
+        const moduleUser = await import('../../dashboard/panels/user/rutinaActivaPanel.js');
+        dashboardRouter.registrarPanel('rutina-activa', moduleUser.renderRutinaActivaPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar rutinaActivaPanel.js:", e);
+    }
+
+    try {
+        const moduleUser = await import('../../dashboard/panels/user/CatalogoEjerciciosPanel.js');
+        dashboardRouter.registrarPanel('catalogo-ejercicios', moduleUser.renderCatalogoEjerciciosPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar CatalogoEjerciciosPanel.js:", e);
+    }
+
+    try {
+        const moduleUser = await import('../../dashboard/panels/user/HistorialRutinasPanel.js');
+        dashboardRouter.registrarPanel('historial-rutinas', moduleUser.renderHistorialRutinasPanel);
+    } catch (e) {
+        console.warn("No se pudo cargar HistorialRutinasPanel.js:", e);
+    }
 
     // ============================================================
     // PASO 4: Navegar al panel por defecto según el rol
     // ============================================================
     const usuario = sessionStore.getUsuario();
-    const panelDefecto = obtenerPanelDefecto(usuario.idRol);
+    const panelDefecto = obtenerPanelDefecto(usuario.idRol, usuario.idPaquete);
     dashboardRouter.navegar(panelDefecto);
 });

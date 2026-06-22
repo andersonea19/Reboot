@@ -46,6 +46,19 @@ export const sessionGuard = {
                 return false;
             }
 
+            // Obtener paquete desde el perfil para asegurar que el sessionStore tenga el idPaquete
+            try {
+                const resPerfil = await fetch(`${URL_BASE}/perfil/existe`, { method: 'GET', credentials: 'include' });
+                if (resPerfil.ok) {
+                    const jsonPerfil = await resPerfil.json();
+                    if (jsonPerfil.ok && jsonPerfil.data) {
+                        data.data.idPaquete = jsonPerfil.data.idPaquete;
+                    }
+                }
+            } catch(e) {
+                console.warn("[SessionGuard] No se pudo obtener el idPaquete del perfil", e);
+            }
+
             // Almacenar datos del usuario en el store global
             sessionStore.setUsuario(data.data);
             return true;

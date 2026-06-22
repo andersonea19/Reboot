@@ -32,10 +32,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (data.ok) {
+                    // Rol admin → dashboard directo
                     if (data.data && data.data.idRol === 2) {
                         window.location.replace('../dashboard/dashboard.html');
-                    } else {
-                        // Redirección limpia al Onboarding; la cookie JSESSIONID ya quedó guardada
+                        return;
+                    }
+
+                    // Usuario normal → verificar si ya completó onboarding
+                    try {
+                        const resExiste = await fetch(`${URL_BASE}/perfil/existe`, {
+                            method: 'GET',
+                            credentials: 'include'
+                        });
+                        const dataExiste = await resExiste.json();
+
+                        if (dataExiste.ok && dataExiste.data.existe === true) {
+                            // Ya completó onboarding → dashboard
+                            window.location.replace('../dashboard/dashboard.html');
+                        } else {
+                            // No ha completado onboarding → ir al onboarding
+                            // Si es Pro (idPaquete === 2), guardar flag para que onboarding omita objetivo
+                            if (data.data && data.data.idPaquete === 2) {
+                                localStorage.setItem('registroPro', 'true');
+                            } else {
+                                localStorage.removeItem('registroPro');
+                            }
+                            window.location.replace('../onboarding/onboarding.html');
+                        }
+                    } catch (e) {
                         window.location.replace('../onboarding/onboarding.html');
                     }
                 } else {

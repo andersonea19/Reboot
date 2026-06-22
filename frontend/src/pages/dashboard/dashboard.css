@@ -1,5 +1,10 @@
 @import "/frontend/src/styles/basic.css";
 
+/* REGLA ESTRICTA: Cero Anuncios en toda la SPA */
+.ad-container, .banner-ad, .publicidad {
+    display: none !important;
+}
+
 .dashboard {
     display: flex;
     width: 100%;
@@ -43,17 +48,17 @@
 }
 
 .sidebar__link {
-    font-size: 0.8rem;
+    font-size: 0.95rem; /* Fuente un poco más grande según lo solicitado */
     border: 1px solid transparent;
-    border-radius: 5px;
+    border-radius: 4px;
     background: transparent;
     color: var(--blanco);
-    padding: 10px 15px;
+    padding: 8px 12px; /* Padding sutil y compacto */
     display: block;
     width: 100%;
     text-align: left;
     cursor: pointer;
-    font-family: var(--fuenteTexto);
+    font-family: var(--fuenteBotones); /* Uso de fuente de botones del root */
     transition:
         background-color 0.3s ease,
         color 0.3s ease;
@@ -194,11 +199,13 @@
 }
 
 .panel__titulo {
-    font-family: var(--fuenteSubtitulo);
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-family: var(--fuenteTitulos);
+    font-size: 2.2rem;
     color: var(--negro);
-    margin-bottom: 0;
+    margin: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .panel__subtitulo {
@@ -315,10 +322,29 @@
     border: 2px solid transparent;
     border-radius: 15px;
     cursor: pointer;
-    transition:
-        background-color 0.3s ease,
-        color 0.3s ease,
-        border-color 0.3s ease;
+}
+
+.boton-limitacion {
+    border-radius: 20px;
+    padding: 10px;
+    transition: 0.3s;
+    background-color: var(--gris-claro);
+    color: var(--negro);
+    font-family: var(--fuenteBotones);
+    font-size: 0.6rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.boton-limitacion:hover {
+    border-color: var(--azul);
+    transform: translateY(-3px);
+}
+
+.boton-limitacion.seleccionado {
+    background-color: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
 }
 
 .panel__boton--editar {
@@ -326,32 +352,14 @@
     color: var(--blanco);
 }
 
-.panel__boton--editar:hover {
-    background-color: var(--blanco);
-    color: var(--azul);
-    border-color: var(--azul);
-}
-
 .panel__boton--guardar {
     background-color: var(--azul);
     color: var(--blanco);
 }
 
-.panel__boton--guardar:hover {
-    background-color: var(--blanco);
-    color: var(--azul);
-    border-color: var(--azul);
-}
-
 .panel__boton--cancelar {
     background-color: var(--gris-oscuro);
     color: var(--blanco);
-}
-
-.panel__boton--cancelar:hover {
-    background-color: var(--blanco);
-    color: var(--gris-oscuro);
-    border-color: var(--gris-oscuro);
 }
 
 /* --- Alertas de feedback --- */
@@ -383,3 +391,30 @@
     margin-top: 1rem;
     font-family: var(--fuenteTexto);
 }
+
+/* --- Ajustes Globales de Tablas --- */
+.table-responsive {
+    width: 100% !important;
+    margin: 0 !important;
+    overflow-x: hidden !important; 
+}
+
+.modern-table {
+    table-layout: auto !important;
+    width: 100% !important;
+    word-wrap: break-word !important;
+}
+
+.modern-table thead {
+    font-size: 0.85rem !important;
+}
+
+.modern-table th {
+    padding: 0.6rem 0.8rem !important;
+}
+
+.modern-table td {
+    padding: 0.5rem 0.8rem !important;
+    font-size: 0.75rem !important;
+    white-space: normal !important;
+}

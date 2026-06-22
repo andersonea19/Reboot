@@ -24,7 +24,7 @@ export const sidebar = {
         }
 
         const usuario = sessionStore.getUsuario();
-        const paneles = obtenerPanelesParaRol(usuario.idRol);
+        const paneles = obtenerPanelesParaRol(usuario.idRol, usuario.idPaquete);
 
         // Limpiar navegación existente
         navContainer.innerHTML = '';
@@ -34,11 +34,32 @@ export const sidebar = {
             const item = document.createElement('div');
             item.classList.add('sidebar__item');
 
+            // --- Lógica Condicional Eliminada: Cero Upsells (Regla Estricta) ---
+            // Se elimina la inyección de botones de "Suscripción" o "Upgrade a Pro"
+
+
             const boton = document.createElement('button');
             boton.classList.add('sidebar__link');
             boton.setAttribute('data-panel', panel.id);
             boton.setAttribute('type', 'button');
-            boton.textContent = `${panel.icono}  ${panel.label}`;
+
+            // --- Lógica Dinámica de Textos e Iconos según Paquete ---
+            if (usuario.idRol === 1) {
+                // Quitar los iconos completamente para el panel del usuario
+                if (panel.id === 'rutina-activa') {
+                    if (usuario.idPaquete === 1) {
+                        boton.innerHTML = `Mi Rutina`;
+                    } else {
+                        boton.innerHTML = `Mis Rutinas`;
+                    }
+                } else if (panel.id === 'catalogo-ejercicios' && usuario.idPaquete === 1) {
+                    boton.innerHTML = `${panel.label}`;
+                } else {
+                    boton.textContent = `${panel.label}`;
+                }
+            } else {
+                boton.textContent = `${panel.label}`;
+            }
 
             // Evento de navegación SPA
             boton.addEventListener('click', () => {
@@ -50,3 +71,5 @@ export const sidebar = {
         });
     }
 };
+
+

@@ -183,6 +183,7 @@ main {
 }
 
 .pasos__titulo {
+    text-align: center;
     font-family: var(--fuenteSubtitulo);
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -194,14 +195,15 @@ main {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
+    margin-bottom: 5%;
 }
 
 .tarjeta__pasos {
     max-width: 420px;
     height: auto;
-    border-radius: 20px;
-    padding: 2%;
-    background-color: var(--negro);
+    border-radius: 25px;
+    background-color: transparent;
+    border: 2px solid var(--negro);
     color: var(--gris-oscuro);
 }
 
@@ -210,24 +212,214 @@ main {
     font-size: 1.4rem;
     text-align: center;
     margin: 15px 0;
+    color: var(--negro);
 }
 
 .subtitulo__paso {
     font-family: var(--fuenteSubtitulo);
-}
+    color: var(--negro);
+    text-align: center;
+    margin-bottom: 5%;}
 
-.texto__paso {
+.texto__paso {color: 
+    var(--negro);
     font-size: 0.7rem;
     font-family: var(--fuenteTexto);
 }
-
+.contenedor__inf {
+    padding: 3%;
+}
 .img__paso {
     display: block;
-    margin: 0 auto;
-    max-width: 100%;;
+    width: 100%;
     height: 200px;
-    border: 5px solid var(--gris-oscuro);
     object-fit: cover;
+    border-radius: 20px 20px 0px 0px;
+}
+
+.servicios {
+    width: 100%;
+    background-image: url(/frontend/public/assets/images/fondo-servicios.jpg);
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.servicios__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.servicios__titulo {
+    font-family: var(--fuenteTitulos);
+    font-size: 4rem;
+    line-height: 0.7;
+    letter-spacing: 20px;
+    margin: 10% 0 5% 0; 
+    text-align: center;
+    color: var(--negro);
+}
+
+.servicios__planes {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    gap: 40px;
+    width: 100%;
+    margin-bottom: 6%;
+}
+
+.plan {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 4px 15px var(--negro);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px var(--negro);
+}
+
+.plan--pro {
+    box-shadow: 0 8px 15px var(--azul);
+}
+
+.plan--pro:hover {
+    box-shadow: 0 10px 30px var(--azul);
+}
+
+.plan__header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--gris-claro);
+    padding-bottom: 20px;
+}
+
+.plan__nombre {
+    font-family: var(--fuenteTitulos);
+    font-size: 2.5rem;
+    color: var(--negro);
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.plan__precio {
+    font-family: var(--fuenteSubtitulo);
+    font-size: 2rem;
+    color: var(--azul);
+    margin: 10px 0 0 0;
+}
+
+.plan__periodo {
+    font-size: 1rem;
+    color: var(--gris-oscuro);
+}
+
+.plan__caracteristicas {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    flex-grow: 1;
+}
+
+.plan__item {
+    font-family: var(--fuenteTexto);
+    font-size: 1rem;
+    color: var(--negro);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.plan__item i.fa-check {
+    color: var(--azul);
+    font-size: 1.1rem;
+}
+
+.plan__item i.fa-xmark {
+    color: var(--rojo, --rojo);
+    font-size: 1.1rem;
+}
+
+.plan__item--inactivo {
+    color: var(--gris-oscuro);
+    text-decoration: line-through;
+}
+
+.plan__boton {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    font-family: var(--fuenteBotones);
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--negro);
+    background: transparent;
+    color: var(--negro);
+}
+
+.plan__boton:hover {
+    background: var(--negro);
+    color: var(--blanco);
+}
+
+.plan__boton--destacado {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: var(--blanco);
+}
+
+.plan__boton--destacado:hover {
+    background: var(--blanco); /* un azul un poco mas oscuro */
+    border-color: var(--azul);
+    color: var(--azul);
+}
+
+@media (max-width: 768px) {
+    h1{
+        font-size: 50px;
+        letter-spacing: -3px;
+    } 
+
+    h1::first-letter {
+        font-size: 1.5cm;
+    }
+
+    .header__barranav {
+        height: 0.8cm;
+    }
+
+    .header__barranav a {
+        font-size: 15px;
+        font-weight: 900;
+        margin: 2px 0px;
+    }
+
+    .header__barranav--left a {
+        margin-right: 10px;
+    }
+
+    .header__barranav--right {
+        margin-right: 4px;
+    }
+
+    .header__barranav--right a {
+        border-radius: 8px;
+    }
+
 }
 
 @media (max-width: 768px) {

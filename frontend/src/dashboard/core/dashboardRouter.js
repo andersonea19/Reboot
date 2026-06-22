@@ -61,6 +61,9 @@ export const dashboardRouter = {
 
         // 3. Ejecutar render del panel destino
         this._panelActual = panelId;
+        
+
+
         try {
             await renderFn(container);
         } catch (error) {

@@ -18,7 +18,7 @@
             <nav class="header__barranav">
                 <a href="#" target="_blank">Inicio</a>
                 <a href="#ACDN">Acerca De Nosotros</a>
-                <a href="#" target="_blank">Servicios</a>
+                <a href="#servicios">Servicios</a>
                 <a href="#" target="_blank">Contactanos</a>
             </nav>
         </div>
@@ -54,24 +54,66 @@
                     <div class="contenedor__tarjetas">
                         <div class="tarjeta__pasos">
                             <img src="/frontend/public/assets/images/analisis-biometrico.webp" alt="analisis-biometrico" class="img__paso">
-                            <h3 class="titulo__paso">PASO 1</h3>
-                            <h4 class="subtitulo__paso">DIAGNÓSTICO BIOMÉTRICO</h4>
-                            <p class="texto__paso">Analizamos tu nivel actual, tus datos fisicos, objetivos y limitaciones para crear tu rutina; no adivinamos, evaluamos.</p>   
+                            <div class="contenedor__inf">
+                                <h3 class="titulo__paso">PASO 1</h3>
+                                <h4 class="subtitulo__paso">DIAGNÓSTICO BIOMÉTRICO</h4>
+                                <p class="texto__paso">Analizamos tu nivel actual, tus datos fisicos, objetivos y limitaciones para crear tu rutina; no adivinamos, evaluamos.</p>
+                            </div>
                         </div>
                         <div class="tarjeta__pasos">
                             <img src="/frontend/public/assets/images/optimizacion-kinetica.png" alt="optimizacion-kinetica" class="img__paso">
-                            <h3 class="titulo__paso">PASO 2</h3>
-                            <h4 class="subtitulo__paso">OPTIMIZACIÓN KINÉTICA</h4>
-                            <p class="texto__paso">Nuestro sistema procesa muchas combinaciones para seleccionar los ejercicios exactos que tu cuerpo necesita ahora</p>
+                            <div class="contenedor__inf">
+                                <h3 class="titulo__paso">PASO 2</h3>
+                                <h4 class="subtitulo__paso">OPTIMIZACIÓN KINÉTICA</h4>
+                                <p class="texto__paso">Nuestro sistema procesa muchas combinaciones para seleccionar los ejercicios exactos que tu cuerpo necesita ahora</p>
+                            </div>
                         </div>
                         <div class="tarjeta__pasos">
                             <img src="/frontend/public/assets/images/evolucion-dinamica.avif" alt="evolucion-dinamica" class="img__paso">
-                            <h3 class="titulo__paso">PASO 3</h3>
-                            <h4 class="subtitulo__paso">EVOLUCIÓN DIMÁMICA</h4>
-                            <p class="texto__paso">El sistema evoluciona contigo, gráficos de progreso claros para visualizar tu transformación semanalmente</p>
+                            <div class="contenedor__inf">
+                                <h3 class="titulo__paso">PASO 3</h3>
+                                <h4 class="subtitulo__paso">EVOLUCIÓN DIMÁMICA</h4>
+                                <p class="texto__paso">El sistema evoluciona contigo, gráficos de progreso claros para visualizar tu transformación semanalmente</p>
+                            </div>
                         </div>
                     </div>
                 </section>
+            </div>
+        </section>
+
+        <section id="servicios" class="servicios">
+            <div class="servicios__contenido">
+                <div class="contenedor__titulo">
+                    <h2 class="servicios__titulo">NUESTROS PLANES</h2>
+                </div>
+                <div class="servicios__planes">
+                    <article class="plan plan--basico">
+                        <div class="plan__header">
+                            <h3 class="plan__nombre">Básico</h3>
+                            <p class="plan__precio">Gratis</p>
+                        </div>
+                        <ul class="plan__caracteristicas">
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> 1 Rutina activa a la vez</li>
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> Coach predeterminado</li>
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> Seguimiento de progreso</li>
+                        </ul>
+                        <a href="/frontend/src/pages/auth/register.html" class="plan__boton">Empezar Gratis</a>
+                    </article>
+
+                    <article class="plan plan--pro">
+                            <div class="plan__header">
+                            <h3 class="plan__nombre">Pro</h3>
+                            <p class="plan__precio">$40k <span class="plan__periodo">/ mes</span></p>
+                        </div>
+                        <ul class="plan__caracteristicas">
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> Múltiples rutinas activas</li>
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> Elige entre varios Coaches virtuales</li>
+                            <li class="plan__item"><i class="fa-solid fa-check"></i> Seguimiento de progreso</li>
+                            <!-- <li class="plan__item"><i class="fa-solid fa-check"></i> Videos demostrativos incluidos</li> -->
+                        </ul>
+                        <button class="plan__boton plan__boton--destacado" onclick="window.location.href='/frontend/src/pages/auth/register.html?plan=pro'">Hazte Pro</button>
+                    </article>
+                </div>
             </div>
         </section>
     </main>
